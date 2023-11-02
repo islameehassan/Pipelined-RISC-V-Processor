@@ -1,4 +1,4 @@
-`include "InstMem.v"
+/*`include "InstMem.v"
 `include "RegFile.v"
 `include "ControlUnit.v"
 `include "ImmGen.v"
@@ -8,10 +8,7 @@
 `include "Nbit_ShiftLeftBy1.v"
 `include "RCA.v"
 `include "Nbit_Register.v"
-
-
-
-
+*/
 
 
 module Datapath(
@@ -23,7 +20,7 @@ module Datapath(
     output reg [12:0] ssd
     );
     wire [31:0] PC;
-    wire [31:0] instruction;                                         // InstMem - ControlUnit - ImmGen - RegFile - RCA
+    wire [31:0] instruction;                                        // InstMem - ControlUnit - ImmGen - RegFile - RCA
     wire [31:0] RF_data1, RF_data2, RF_writedata;                   // RegFile - ALU - DataMem
     wire branch, memread, memtoreg, memwrite, alusrc, regwrite;     // ControlUnit - DataMem
     wire [1:0] aluop;                                               // ControlUnit - ALU_ControlUnit
@@ -74,8 +71,8 @@ module Datapath(
     /*
     PC Manipulation
     */
-    Nbit_ShiftLeftBy1 #(32) SL(.A(gen_out), .B(SL_result));
-    RCA #(32) rca(.A(PC), .B(SL_result), .sum(RCA_result));
+    Nbit_ShiftLeftBy1 #(32) SL(.a(gen_out), .b(SL_result));
+    RCA #(32) rca(.a(PC), .b(SL_result), .sum(RCA_result));
     assign new_PC = (branch && ZeroFlag)?(RCA_result):(PC+4);  
     Nbit_Register #(32)pc(clk, rst, 1, new_PC, PC);
     

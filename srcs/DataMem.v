@@ -15,8 +15,18 @@ module DataMem(
         Mem[0]=32'd17;
         Mem[1]=32'd9;
         Mem[2]=32'd25;
-    
     end
+    
+    /*initial begin
+        Mem[0]=32'd1;
+        Mem[1]=32'd2;
+        Mem[2]=32'd0;
+        Mem[3]=32'd4;
+        Mem[4]=32'd5;
+        Mem[5]=32'd6;
+        Mem[6]=32'd0;
+        Mem[7] = 32'd4;
+    end*/
 
     always@(posedge clk)begin
         if(memwrite == 1)

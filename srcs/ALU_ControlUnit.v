@@ -1,6 +1,6 @@
-`ifndef ALUCONTROLUNIT
+/*`ifndef ALUCONTROLUNIT
 `include "../include/defines.v"
-
+*/
 module ALU_ControlUnit(
     input [1: 0] aluop,
     input [2: 0] func3,
