@@ -62,3 +62,10 @@
 
 `define     SYS_EC_EB       3'b000	    
 
+`define     ALUOP_R_I             3'b000
+`define     ALUOP_Load_Store      3'b001
+`define     ALUOP_Branch          3'b010
+`define     ALUOP_JALR            3'b011
+`define     ALUOP_OTHER           3'b111 
+
+

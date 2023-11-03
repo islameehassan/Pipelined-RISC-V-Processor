@@ -24,10 +24,7 @@ module Datapath(
     wire [31:0] new_PC;                                              
     
    
-/*    assign tempPC = PC;
-    always @(negedge rst)begin
-        PC = 0;
-    end*/
+    
     
     /*
     Instruction Memory

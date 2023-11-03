@@ -8,6 +8,8 @@ module DataMem(
 );
 
     reg [31: 0] Mem[0: 63];
+    // reg [7: 0] Mem[0: 255];
+    // Mem[addr:arr+3], Mem[addr: addr + 0], Mem[0:addr+1]
 
     assign data_out = (memread) ? (Mem[addr/4]): 32'b0;
 
