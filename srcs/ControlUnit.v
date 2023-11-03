@@ -1,18 +1,18 @@
-
+`include "include/defines.v"
 
 module ControlUnit(
     input [4: 0]inst,
     output reg branch, memread, memtoreg, memwrite, alusrc, regwrite,
-    output reg [1: 0] aluop
+    output reg [2: 0] aluop
 );
 
     always@(*)begin
         // R-Format
-        if(inst == 5'b01100)begin
+        if(inst == `OPCODE_Arith_R)begin
             branch = 0;
             memread = 0;
             memtoreg = 0;
-            aluop = 2'b10;
+            aluop = 4'b10;
             memwrite = 0;
             alusrc = 0;
             regwrite = 1;

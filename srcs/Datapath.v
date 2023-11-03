@@ -1,15 +1,4 @@
-/*`include "InstMem.v"
-`include "RegFile.v"
-`include "ControlUnit.v"
-`include "ImmGen.v"
-`include "ALU_ControlUnit.v"
-`include "ALU.v"
-`include "DataMem.v"
-`include "Nbit_ShiftLeftBy1.v"
-`include "RCA.v"
-`include "Nbit_Register.v"
-*/
-
+`include "include/defines.v"
 
 module Datapath(
     input clk,
