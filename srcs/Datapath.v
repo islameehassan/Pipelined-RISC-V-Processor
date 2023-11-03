@@ -24,10 +24,10 @@ module Datapath(
     wire [31:0] new_PC;                                              
     
    
-    
+
     
     /*
-    Instruction Memory
+        Instruction Memory
     */
     // Fetching instructions each positive edge
   

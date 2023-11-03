@@ -35,7 +35,7 @@ module ALU_ControlUnit(
             begin
                 alusel = `ALU_SLTU
             end
-            // XOR & X
+            // XOR & XORI
             else if(func3 == `F3_XOR)
             begin
                 alusel = `ALU_XOR;

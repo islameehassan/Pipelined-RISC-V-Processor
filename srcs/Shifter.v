@@ -1,5 +1,5 @@
 /*
-    This modules shifts both left and right(logical and arthimetic)
+    shifts r left or right(logical and arthimetic)
 */
 
 module Shifter(
