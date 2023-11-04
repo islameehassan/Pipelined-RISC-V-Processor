@@ -1,20 +1,20 @@
 `include "include/defines.v"
 
 module ImmGen(
-	input  wire [31:0]  IR,
-    output reg  [31:0]  Imm
+	input  wire [31:0]  inst,
+    output reg  [31:0]  imm
 );
 
 always @(*) begin
 	case (`OPCODE)
-		`OPCODE_Arith_I   : 	Imm = { {21{IR[31]}}, IR[30:25], IR[24:21], IR[20] };
-		`OPCODE_Store     :     Imm = { {21{IR[31]}}, IR[30:25], IR[11:8], IR[7] };
-		`OPCODE_LUI       :     Imm = { IR[31], IR[30:20], IR[19:12], 12'b0 };
-		`OPCODE_AUIPC     :     Imm = { IR[31], IR[30:20], IR[19:11], 11'b0}; 				// auipc should have 11 instead of 12 as it will be later shifted
-		`OPCODE_JAL       : 	Imm = { {12{IR[31]}}, IR[19:12], IR[20], IR[30:25], IR[24:21], 1'b0 };
-		`OPCODE_JALR      : 	Imm = { {21{IR[31]}}, IR[30:25], IR[24:21], IR[20] };
-		`OPCODE_Branch    : 	Imm = { {20{IR[31]}}, IR[7], IR[30:25], IR[11:8], 1'b0};
-		default           : 	Imm = { {21{IR[31]}}, IR[30:25], IR[24:21], IR[20] }; // IMM_I
+		`OPCODE_Arith_I   : 	imm = { {21{inst[31]}}, inst[30:25], inst[24:21], inst[20] };
+		`OPCODE_Store     :     imm = { {21{inst[31]}}, inst[30:25], inst[11:8], inst[7] };
+		`OPCODE_LUI       :     imm = { inst[31], inst[30:20], inst[19:12], 12'b0 };
+		`OPCODE_AUIPC     :     imm = { inst[31], inst[30:20], inst[19:11], 11'b0}; 				// auipc should have 11 instead of 12 as it will be later shifted
+		`OPCODE_JAL       : 	imm = { {12{inst[31]}}, inst[19:12], inst[20], inst[30:25], inst[24:21], 1'b0 };
+		`OPCODE_JALR      : 	imm = { {21{inst[31]}}, inst[30:25], inst[24:21], inst[20] };
+		`OPCODE_Branch    : 	imm = { {20{inst[31]}}, inst[7], inst[30:25], inst[11:8], 1'b0};
+		default           : 	imm = { {21{inst[31]}}, inst[30:25], inst[24:21], inst[20] }; // imm_I
 	endcase 
 end
 

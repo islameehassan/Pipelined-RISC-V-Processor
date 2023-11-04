@@ -3,9 +3,9 @@
 module ALU(
     input   wire [31:0] a, b,
 	input   wire [4:0]  shamt,  // shift amount
+    input   wire [3:0]  alusel,
 	output  reg  [31:0] r,
 	output  wire  cf, zf, vf, sf, // carry, zero, overflow and sign flags
-	input   wire [3:0]  alusel
 );
 
     wire [31:0] add, sub, op_b;

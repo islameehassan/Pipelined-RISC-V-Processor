@@ -8,11 +8,11 @@
 module HaltingUnit(
     input[4: 0] inst,
     input ebreak_bit,   // bit 20 in ebreak, used to set halt to 1 automatically
-    output halt
+    output reg halt
 );
     always@(inst or ebreak_bit)
     begin
-        if(inst == `OPCODE_SYSTEM)
+        if(inst == `OPCODE_SYSTEM && ebreak_bit)
         begin
             halt = 1'b1;
         end

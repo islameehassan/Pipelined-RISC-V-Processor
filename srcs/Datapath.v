@@ -8,69 +8,88 @@ module Datapath(
     output reg [15:0] leds,
     output reg [12:0] ssd
     );
+    
     wire [31:0] PC;
-    wire [31:0] instruction;                                        // InstMem - ControlUnit - ImmGen - RegFile - RCA
-    wire [31:0] RF_data1, RF_data2, RF_writedata;                   // RegFile - ALU - DataMem
-    wire branch, memread, memtoreg, memwrite, alusrc, regwrite;     // ControlUnit - DataMem
-    wire [1:0] aluop;                                               // ControlUnit - ALU_ControlUnit
-    wire [31:0] gen_out;                                            // ImmGen - Nbit_ShiftLeftBy1
-    wire [3:0] alusel;                                              // ALU_ControlUnit - ALU
-    wire [31:0] ALU_data2;                                          // ALU
-    wire [31:0] ALU_result;                                         // ALU - DataMem
-    wire ZeroFlag;                                                  // ALU
-    wire [31:0] DM_result;                                          // DataMem
-    wire [31:0] SL_result;                                          // Nbit_ShiftLeftBy1 - RCA
-    wire [31:0] RCA_result;                                         // RCA
-    wire [31:0] new_PC;                                              
+    wire [31:0] instruction;                                                            // InstMem - ControlUnit - ImmGen - RegFile - RCA
+    wire [31:0] RF_data1, RF_data2, RF_writedata;                                       // RegFile - ALU - DataMem
+    wire [31:0] imm;                                                                    // ImmGen - Nbit_ShiftLeftBy1
+    wire [31:0] ALU_data2, ALU_result;                                                  // ALU
+    wire [31:0] DM_result, Mux_DM_Result;                                               // DataMem
+    wire [31:0] SL_result;                                                              // Nbit_ShiftLeftBy1 - RCA
+    wire [31:0] RCA_result;                                                             // RCA
+    wire [31:0] new_PC;                                                                 // Nbit_Register
+    
+    wire [3:0] alusel;                                                                  // ALU_ControlUnit - ALU
+    wire [2:0] aluop;                                                                   // ControlUnit - ALU_ControlUnit
+    wire [1:0] regwrite_sel;                                                            // ControlUnit - ALU_ControlUnit
+    wire [1:0] pcsrc;
+
+    wire cf, zf, vf, sf, branch_flag;                                                   // ALU - BranchingUnit 
+    wire branch, memread, memtoreg, memwrite, alusrc, regwrite, jal_jump, jalr_jump;    // ControlUnit - DataMem                                                                 
+    wire halt;                                                                          // HaltingUnit
     
    
 
     
     /*
         Instruction Memory
+        - Fetching instructions each positive edge
     */
-    // Fetching instructions each positive edge
-  
-    
     InstMem IM(.addr(PC), .data_out(instruction)); 
     
     
     
-    RegFile RF(.readreg1(instruction[19:15]), .readreg2(instruction[24:20]), .writereg(instruction[11:7]), .writedata(RF_writedata), .regwrite(regwrite), .rst(rst), .clk(clk), .readdata1(RF_data1), .readdata2(RF_data2));
-    ControlUnit CU(.inst(instruction[6:2]), .branch(branch), .memread(memread), .memtoreg(memtoreg), .memwrite(memwrite), .alusrc(alusrc), .regwrite(regwrite), .aluop(aluop));
-    ImmGen IG(.inst(instruction), .gen_out(gen_out));    
-    ALU_ControlUnit ALU_C(.aluop(aluop), .func3(instruction[14:12]), .func7bit(instruction[30]), .alusel(alusel));
+    RegFile rf(.clk(clk), .rst(rst), .regwrite(regwrite), .readreg1(instruction[`IR_rs1]), .readreg2(instruction[`IR_rs2]), .writereg(instruction[`IR_rd]), .writedata(RF_writedata), .readdata1(RF_data1), .readdata2(RF_data2));
+    ControlUnit cu(.inst(instruction[`IR_opcode]), .branch(branch), .memread(memread), .memtoreg(memtoreg), .memwrite(memwrite), .alusrc(alusrc), .regwrite(regwrite), .jalr_jump(jalr_jump), .jal_jump(jal_jump), .regwrite_sel(regwrite_sel), .aluop(aluop));
+    ImmGen ig(.inst(instruction), .imm(imm));    
+    ALU_ControlUnit alu_c(.aluop(aluop), .func3(instruction[`IR_funct3]), .func7bit(instruction[`IR_funct7]), .alusel(alusel));
     
     /*
-    ALU 
+        ALU 
     */
-    assign ALU_data2 = (alusrc)?(gen_out):(RF_data2);
-    ALU alu(.A(RF_data1), .B(ALU_data2), .sel(alusel), .ALUOutput(ALU_result), .ZeroFlag(ZeroFlag));
+    assign ALU_data2 = (alusrc)?(imm):(RF_data2);
+    ALU alu(.a(RF_data1), .b(ALU_data2), .shamt(instruction[`IR_shamt]), .sel(alusel), .r(ALU_result), .cf(cf), .zf(zf), .vf(vf), .sf(sf));
     
     /*
-    Data Memory
+        Data Memory
+        --> regwrite_sel: RF_writedata
+        --> 00: write from the mux after the data memory, which selects from the alu output or the data memory output
+        --> 01: write from PC + 4, which is the case in jal and jalr instructions
+        --> 10: write from imm, which is the case in LUI
+        --> 11: write from the rca, which is the case in AUIPC
     */
-    DataMem DM(.clk(clk), .memread(memread), .memwrite(memwrite), .addr(ALU_result[5:0]), .data_in(RF_data2), .data_out(DM_result));
-    assign RF_writedata = (memtoreg)?(DM_result):(ALU_result);
-    
-   
+    DataMem dm(.clk(clk), .memread(memread), .memwrite(memwrite), .func3(instruction[`IR_funct3]), .addr(ALU_result), .data_in(RF_data2), .data_out(DM_result));
+    assign Mux_DM_Result = (memtoreg)?(DM_result):(ALU_result);
+    assign RF_writedata = (regwrite_sel == 2'b00) ? Mux_DM_Result: ((regwrite_sel == 2'b01) ? PC + 4): ((regwrite_sel == 2'b10) ? imm): RCA_result;  
+
     /*
-    PC Manipulation
+        PC Manipulation
+        --> PCSRC:  new_PC
+        --> 00: Takes the value of PC+4 which means there is no branching or jumping
+        --> 01: Takes the value of PC which means it is an ebreak instruciton to stop the code
+        --> 10: Takes the value coming from the RCA after branching or jumping
+        --> 11: Takes the value coming from the ALU after JALR instruction
     */
-    Nbit_ShiftLeftBy1 #(32) SL(.a(gen_out), .b(SL_result));
+    BranchingUnit bu(.func3(instruciton[`IR_funct3]), .cf(cf), .zf(zf), .vf(vf), .sf(sf), .jalr_jump(jalr_jump), .r(branch_flag));
+    HaltingUnit hu(.inst(instruction[`OPCODE]), .ebreak_bit(instruction[20]), .halt(halt));
+    
+    assign pcsrc = {(branch & branch_flag) | jal_jump, jalr_jump | halt}
+    Nbit_ShiftLeftBy1 #(32) sl(.a(imm), .b(SL_result));
     RCA #(32) rca(.a(PC), .b(SL_result), .sum(RCA_result));
-    assign new_PC = (branch && ZeroFlag)?(RCA_result):(PC+4);  
+    assign new_PC = (pcsrc == 2'b00) ? PC+4: ((pcsrc == 2'b01) ? PC): ((pcsrc == 2'b10) ? RCA_result): ALU_result;  
     Nbit_Register #(32)pc(clk, rst, 1, new_PC, PC);
     
-    
+
+    /*
+        LEDs and Switches for FPGA display
+    */
     always@(ledSel)begin
         if(ledSel == 2'b00)
             leds = instruction[15:0];
         else if(ledSel == 2'b01)
             leds = instruction[31:16];
         else if(ledSel == 2'b10) begin
-            leds[15:14] = 2'b00;
-            leds = {branch, memread, memtoreg, memwrite, alusrc, regwrite, aluop, alusel, ZeroFlag, branch && ZeroFlag};
+            leds = {{2{1'b0}},branch, memread, memtoreg, memwrite, alusrc, regwrite, aluop, alusel, branch_flag, branch && branch_flag};
         end
         else
             leds = 16'b0;
@@ -85,7 +104,7 @@ module Datapath(
         4'b0100: ssd = RF_data1; // "4"
         4'b0101: ssd = RF_data2; // "5"
         4'b0110: ssd = RF_writedata; // "6"
-        4'b0111: ssd = gen_out; // "7"
+        4'b0111: ssd = imm; // "7"
         4'b1000: ssd = SL_result; // "8"
         4'b1001: ssd = ALU_data2; // "9"
         4'b1010: ssd = ALU_result; // "negative"
