@@ -15,7 +15,7 @@ module Datapath(
     wire [31:0] imm;                                                                    // ImmGen - Nbit_ShiftLeftBy1
     wire [31:0] ALU_data2, ALU_result;                                                  // ALU
     wire [31:0] DM_result, Mux_DM_Result;                                               // DataMem
-    wire [31:0] SL_result;                                                              // Nbit_ShiftLeftBy1 - RCA
+    //wire [31:0] SL_result;                                                              // Nbit_ShiftLeftBy1 - RCA
     wire [31:0] RCA_result;                                                             // RCA
     wire [31:0] new_PC;                                                                 // Nbit_Register
     
@@ -42,7 +42,7 @@ module Datapath(
     RegFile rf(.clk(clk), .rst(rst), .regwrite(regwrite), .readreg1(instruction[`IR_rs1]), .readreg2(instruction[`IR_rs2]), .writereg(instruction[`IR_rd]), .writedata(RF_writedata), .readdata1(RF_data1), .readdata2(RF_data2));
     ControlUnit cu(.inst(instruction[`IR_opcode]), .branch(branch), .memread(memread), .memtoreg(memtoreg), .memwrite(memwrite), .alusrc(alusrc), .regwrite(regwrite), .jalr_jump(jalr_jump), .jal_jump(jal_jump), .regwrite_sel(regwrite_sel), .aluop(aluop));
     ImmGen ig(.inst(instruction), .imm(imm));    
-    ALU_ControlUnit alu_c(.aluop(aluop), .func3(instruction[`IR_funct3]), .func7bit(instruction[`IR_funct7]), .alusel(alusel));
+    ALU_ControlUnit alu_c(.aluop(aluop), .func3(instruction[`IR_funct3]), .func7bit(instruction[30]), .alusel(alusel));
     
     /*
         ALU 
@@ -60,7 +60,7 @@ module Datapath(
     */
     DataMem dm(.clk(clk), .memread(memread), .memwrite(memwrite), .func3(instruction[`IR_funct3]), .addr(ALU_result), .data_in(RF_data2), .data_out(DM_result));
     assign Mux_DM_Result = (memtoreg)?(DM_result):(ALU_result);
-    assign RF_writedata = (regwrite_sel[0] == 1'b0) ? (regwrite_sel[1] == 1'b0 ? Mux_DM_Result: PC + 4): (regwrite_sel[1] == 1'b0 ? imm:RCA_result);  
+    assign RF_writedata = (regwrite_sel[1] == 1'b0) ? (regwrite_sel[1] == 1'b0 ? Mux_DM_Result: PC + 4): (regwrite_sel[0] == 1'b0 ? imm:RCA_result);  
 
     /*
         PC Manipulation
@@ -74,9 +74,9 @@ module Datapath(
     HaltingUnit hu(.inst(instruction[`IR_opcode]), .ebreak_bit(instruction[20]), .halt(halt));
     
     assign pcsrc = {(branch & branch_flag) | jal_jump, jalr_jump | halt};
-    Nbit_ShiftLeftBy1 #(32) sl(.a(imm), .b(SL_result));
-    RCA #(32) rca(.a(PC), .b(SL_result), .sum(RCA_result));
-    assign new_PC = (pcsrc[0] == 1'b0) ? (pcsrc[1] == 1'b0: PC+4: PC): (pcsrc[1] == 1'b0 ? RCA_result: ALU_result);    Nbit_Register #(32)pc(clk, rst, 1, new_PC, PC);
+    //Nbit_ShiftLeftBy1 #(32) sl(.a(imm), .b(SL_result));           // No need
+    RCA #(32) rca(.a(PC), .b(imm), .sum(RCA_result));
+    assign new_PC = (pcsrc[1] == 1'b0) ? (pcsrc[1] == 1'b0: PC+4: PC): (pcsrc[0] == 1'b0 ? RCA_result: ALU_result);    Nbit_Register #(32)pc(clk, rst, 1, new_PC, PC);
     
 
     /*
@@ -104,7 +104,7 @@ module Datapath(
         4'b0101: ssd = RF_data2; // "5"
         4'b0110: ssd = RF_writedata; // "6"
         4'b0111: ssd = imm; // "7"
-        4'b1000: ssd = SL_result; // "8"
+        4'b1000: ssd = imm; // "8"                  // Was SL_Result
         4'b1001: ssd = ALU_data2; // "9"
         4'b1010: ssd = ALU_result; // "negative"
         4'b1011: ssd = DM_result; // "off"

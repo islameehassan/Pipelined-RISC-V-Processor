@@ -10,7 +10,7 @@ always @(*) begin
 		`OPCODE_Arith_I   : 	imm = { {21{inst[31]}}, inst[30:25], inst[24:21], inst[20] };
 		`OPCODE_Store     :     imm = { {21{inst[31]}}, inst[30:25], inst[11:8], inst[7] };
 		`OPCODE_LUI       :     imm = { inst[31], inst[30:20], inst[19:12], 12'b0 };
-		`OPCODE_AUIPC     :     imm = { inst[31], inst[30:20], inst[19:11], 11'b0}; 				// auipc should have 11 instead of 12 as it will be later shifted
+		`OPCODE_AUIPC     :     imm = { inst[31], inst[30:20], inst[19:12], 12'b0}; 				// auipc should have 11 instead of 12 as it will be later shifted
 		`OPCODE_JAL       : 	imm = { {12{inst[31]}}, inst[19:12], inst[20], inst[30:25], inst[24:21], 1'b0 };
 		`OPCODE_JALR      : 	imm = { {21{inst[31]}}, inst[30:25], inst[24:21], inst[20] };
 		`OPCODE_Branch    : 	imm = { {20{inst[31]}}, inst[7], inst[30:25], inst[11:8], 1'b0};
