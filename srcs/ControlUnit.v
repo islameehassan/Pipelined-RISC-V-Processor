@@ -1,8 +1,8 @@
-`include "include/defines.v"
+`include "defines.v"
 
 module ControlUnit(
     input [4: 0]inst,
-    output reg branch, memread, memtoreg, memwrite, alusrc, regwrite, jalr_jump, jal_jump
+    output reg branch, memread, memtoreg, memwrite, alusrc, regwrite, jalr_jump, jal_jump,
     output reg [1: 0] regwrite_sel,
     output reg [2: 0] aluop
 );

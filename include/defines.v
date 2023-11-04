@@ -1,4 +1,5 @@
-`include "srcs/InstMem.v"
+`timescale 1ns / 1ps
+/*`include "srcs/InstMem.v"
 `include "srcs/RegFile.v"
 `include "srcs/ControlUnit.v"
 `include "srcs/ImmGen.v"
@@ -8,7 +9,7 @@
 `include "srcs/Nbit_ShiftLeftBy1.v"
 `include "srcs/RCA.v"
 `include "srcs/Nbit_Register.v"
-
+*/
 `define     IR_rs1          19:15
 `define     IR_rs2          24:20
 `define     IR_rd           11:7

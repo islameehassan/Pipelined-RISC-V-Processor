@@ -3,7 +3,7 @@
     , which is responsible for pausing the CPU, i.e., not taking any instructions. 
     Important for debugging.
 */
-`include "include/defines.v"
+`include "defines.v"
 
 module HaltingUnit(
     input[4: 0] inst,

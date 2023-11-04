@@ -20,7 +20,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module RISCV(input Clock,
+module RISCV(
+    input Clock,
     input Reset,
     input [1:0] ledSel,
     input [3:0] ssdSel,

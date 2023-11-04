@@ -1,7 +1,7 @@
 /*
     This modules handles all the Branching instructions by using the flags provided from the ALU.
 */
-`include "include/defines.v"
+`include "defines.v"
 
 module BranchingUnit(
     input [2:0] func3,

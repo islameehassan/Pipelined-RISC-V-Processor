@@ -1,5 +1,5 @@
+`include "defines.v"
 
-`include "include/defines.v"
 module ALU_ControlUnit(
     input [2: 0] aluop,
     input [2: 0] func3,
@@ -33,7 +33,7 @@ module ALU_ControlUnit(
             // SLTU & SLTIU
             else if(func3 == `F3_SLTU)
             begin
-                alusel = `ALU_SLTU
+                alusel = `ALU_SLTU;
             end
             // XOR & XORI
             else if(func3 == `F3_XOR)
@@ -44,7 +44,7 @@ module ALU_ControlUnit(
             else if(func3 == `F3_SRL)
             begin
                 if(func7bit == 1'b1)
-                    alusel = `ALU_SRA
+                    alusel = `ALU_SRA;
                 else
                     alusel = `ALU_SRL;
             end

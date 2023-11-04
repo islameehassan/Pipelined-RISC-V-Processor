@@ -1,11 +1,11 @@
-`include "include/defines.v"
+//`include "include/defines.v"
 
 module ALU(
     input   wire [31:0] a, b,
 	input   wire [4:0]  shamt,  // shift amount
     input   wire [3:0]  alusel,
 	output  reg  [31:0] r,
-	output  wire  cf, zf, vf, sf, // carry, zero, overflow and sign flags
+	output  wire  cf, zf, vf, sf // carry, zero, overflow and sign flags
 );
 
     wire [31:0] add, sub, op_b;
@@ -20,7 +20,7 @@ module ALU(
     assign vf = (a[31] ^ (op_b[31]) ^ add[31] ^ cf); // 1 1 0 1     0111 + 0111
     wire[31:0] sh;
     // to be implemented
-    Shifter shifter0(.a(a), .shamt(shamt), .type(alusel[1:0]),  .r(sh));
+    Shifter shifter0(.a(a), .shamt(shamt), .alusel(alusel[1:0]),  .r(sh));
     
     always @ * begin
         r = 0;

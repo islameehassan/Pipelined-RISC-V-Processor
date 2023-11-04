@@ -1,4 +1,4 @@
-`include "include/defines.v"
+`include "defines.v"
 
 module ImmGen(
 	input  wire [31:0]  inst,
@@ -6,7 +6,7 @@ module ImmGen(
 );
 
 always @(*) begin
-	case (`OPCODE)
+	case (inst[`IR_opcode])
 		`OPCODE_Arith_I   : 	imm = { {21{inst[31]}}, inst[30:25], inst[24:21], inst[20] };
 		`OPCODE_Store     :     imm = { {21{inst[31]}}, inst[30:25], inst[11:8], inst[7] };
 		`OPCODE_LUI       :     imm = { inst[31], inst[30:20], inst[19:12], 12'b0 };
