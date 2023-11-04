@@ -1,5 +1,8 @@
 #include <iostream>
 #include <fstream>
+#include <stdlib.h>
+#include <time.h>
+
 
 
 struct instruction{
@@ -13,7 +16,7 @@ instruction rv32I_instructions[] = {
     {"lui", 'U'},
     {"auipc", 'U'},
     {"jal", 'J'},
-    {"jalr", 'L'},
+    {"jalr", 'I'},
     {"beq", 'B'},
     {"bne", 'B'},
     {"blt", 'B'},

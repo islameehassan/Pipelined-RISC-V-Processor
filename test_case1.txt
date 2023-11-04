@@ -1,0 +1,10 @@
+bgeu x5, x5, 4			// 0x0052f463
+srli x6, x2, 2			// 0x00215313
+fence				// 0x0ff0000f
+slli x7, x3, 1			// 0x00119393
+ecall				// 0x00000073
+sub x8, x2, x1			// 0x40110433
+srai x4, x3, 2			// 0x4021d213
+lui x13, 10			// 0x0000a6b7
+sub x9, x3, x1			// 0x401184b3
+srl x10, x2, x6			// 0x00615533

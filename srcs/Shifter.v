@@ -13,15 +13,15 @@ module Shifter(
         // default: no shift
         r = a;
 
-        // SLL & SLI
+        // SRL & SRLI
         if(alusel == 2'b00)
         begin
-            r = a << shamt;
+            r = a >> shamt;
         end
-        // SRL & SRLI
+        // SLL & SLI
         else if(alusel == 2'b01)
         begin
-            r = a >> shamt;
+            r = a << shamt;
         end
         // SRA & SRAI
         else if(alusel == 2'b10)

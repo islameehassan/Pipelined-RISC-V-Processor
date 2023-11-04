@@ -19,6 +19,7 @@ module Datapath(
     wire [31:0] RCA_result;                                                             // RCA
     wire [31:0] new_PC;                                                                 // Nbit_Register
     
+    wire [4:0] shamt;
     wire [3:0] alusel;                                                                  // ALU_ControlUnit - ALU
     wire [2:0] aluop;                                                                   // ControlUnit - ALU_ControlUnit
     wire [1:0] regwrite_sel;                                                            // ControlUnit - ALU_ControlUnit
@@ -48,7 +49,8 @@ module Datapath(
         ALU 
     */
     assign ALU_data2 = (alusrc)?(imm):(RF_data2);
-    ALU alu(.a(RF_data1), .b(ALU_data2), .shamt(instruction[`IR_shamt]), .alusel(alusel), .r(ALU_result), .cf(cf), .zf(zf), .vf(vf), .sf(sf));
+    assign shamt = (instruction[5])?(RF_data2):(instruction[`IR_shamt]);
+    ALU alu(.a(RF_data1), .b(ALU_data2), .shamt(shamt), .alusel(alusel), .r(ALU_result), .cf(cf), .zf(zf), .vf(vf), .sf(sf));
     
     /*
         Data Memory
@@ -60,7 +62,7 @@ module Datapath(
     */
     DataMem dm(.clk(clk), .memread(memread), .memwrite(memwrite), .func3(instruction[`IR_funct3]), .addr(ALU_result), .data_in(RF_data2), .data_out(DM_result));
     assign Mux_DM_Result = (memtoreg)?(DM_result):(ALU_result);
-    assign RF_writedata = (regwrite_sel[1] == 1'b0) ? (regwrite_sel[1] == 1'b0 ? Mux_DM_Result: PC + 4): (regwrite_sel[0] == 1'b0 ? imm:RCA_result);  
+    assign RF_writedata = (regwrite_sel[1] == 1'b0) ? (regwrite_sel[0] == 1'b0 ? Mux_DM_Result: PC + 4): (regwrite_sel[0] == 1'b0 ? imm:RCA_result);  
 
     /*
         PC Manipulation
@@ -76,7 +78,7 @@ module Datapath(
     assign pcsrc = {(branch & branch_flag) | jal_jump, jalr_jump | halt};
     //Nbit_ShiftLeftBy1 #(32) sl(.a(imm), .b(SL_result));           // No need
     RCA #(32) rca(.a(PC), .b(imm), .sum(RCA_result));
-    assign new_PC = (pcsrc[1] == 1'b0) ? (pcsrc[1] == 1'b0: PC+4: PC): (pcsrc[0] == 1'b0 ? RCA_result: ALU_result);    Nbit_Register #(32)pc(clk, rst, 1, new_PC, PC);
+    assign new_PC = (pcsrc[1] == 1'b0) ? (pcsrc[0] == 1'b0 ? PC+4: PC): (pcsrc[0] == 1'b0 ? RCA_result: ALU_result);    Nbit_Register #(32)pc(clk, rst, 1, new_PC, PC);
     
 
     /*

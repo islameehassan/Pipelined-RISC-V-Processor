@@ -1,0 +1,25 @@
+xori x4, x2, 6
+sltu x6, x2, x5
+slt x7, x2, x5
+bltu x3, x5, 8
+add x4, x2, x3
+ecall
+bne x0, x0, 4
+sltiu x8, x2, 39
+jal x9, 12
+bge x3, x2, 20
+add x0, x0, x0
+add x0, x0, x0
+addi x11, x3, 50
+jalr x10, x9, 0
+blt x0, x1, 8
+addi x0, x0, 0
+auipc x12, 1	
+xor x13, x2, x0
+sltiu x14, x2, -1
+slti x15, x2, -1
+ori x16, x2, 4
+andi x2, x1, 0
+ebreak
+add x2, x2, x3
+addi x0, x0, 0

@@ -39,6 +39,10 @@ module DataMem(
         Mem[9]=8'b0000_0000;
         Mem[10]=8'b0000_0000;
         Mem[11]=8'b0000_0000;
+        Mem[12]=8'b1111_1111;
+        Mem[13]=8'b1111_1111;
+        Mem[14]=8'b1111_1111;
+        Mem[15]=8'b1111_1111;
     end 
 
     always@(posedge clk)begin

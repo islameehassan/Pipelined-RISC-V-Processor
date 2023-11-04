@@ -81,7 +81,7 @@ module ControlUnit(
         // JALR
         else if(inst == `OPCODE_JALR)
         begin
-            branch = 0; // it does branching but through another source, so it does not make sense to have branch = 1 here
+            branch = 1; // it does branching but through another source, so it does not make sense to have branch = 1 here
             memread = 0;
             memtoreg = 0;
             aluop = `ALUOP_JALR;
