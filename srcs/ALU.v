@@ -1,5 +1,19 @@
 //`include "include/defines.v"
 
+/*******************************************************************
+*
+* Module: ALU.v
+* Project: Pipelined-RISC-V Processor
+* Author: Adopted from Dr. Cherif Salama
+* Description: @inputs: a, b, shamt, alusel
+               @outputs: r, cf, zf, vf, sf
+               @importance: operating on a & b and executing the functions selected by alusel. 
+                            generating flags to be used later by the branching unit
+*
+* Change history: No changes
+*
+**********************************************************************/
+
 module ALU(
     input   wire [31:0] a, b,
 	input   wire [4:0]  shamt,  // shift amount

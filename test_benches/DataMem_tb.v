@@ -1,25 +1,18 @@
 `include"srcs/DataMem.v"
 
-`timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 11/03/2023 11:46:55 PM
-// Design Name: 
-// Module Name: DataMemory_tb
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************
+*
+* Module: ControlUnit.v
+* Project: Pipelined-RISC-V Processor
+* Author: Adham El-Asfar, adham_samy@aucegypt.edu
+* Description: @inputs: 
+               @outputs:
+               @importance: testing all the load and store instructions seperately from 
+                            other instructions
+*
+* Change history: 04/11/2023 – created and added the test cases
+*
+**********************************************************************/
 
 module DataMem_tb();
  

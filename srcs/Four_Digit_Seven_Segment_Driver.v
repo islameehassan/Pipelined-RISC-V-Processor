@@ -1,23 +1,15 @@
-`timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 09/05/2023 11:48:03 AM
-// Design Name: 
-// Module Name: Four_Digit_Seven_Segment_Driver
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************
+*
+* Module: Four_Digit_Seven_Segment_Driver.v
+* Project: Pipelined-RISC-V Processor
+* Author: @all
+* Description: @inputs: clk, num
+               @outputs: anode, led_out
+               @importance: displaying data
+*
+* Change history: No changes on the implementation done in the lab
+*
+**********************************************************************/
 
 
 module Four_Digit_Seven_Segment_Driver ( 

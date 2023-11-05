@@ -1,3 +1,16 @@
+/*******************************************************************
+*
+* Module: ControlUnit.v
+* Project: Pipelined-RISC-V Processor
+* Author: Adham El-Asfar, adham_samy@aucegypt.edu
+* Description: @inputs: addr
+               @outputs: data_out
+               @importance: storing instructions to be feteched
+*
+* Change history:  04/11/2023 – three sets of instructions for testing
+*
+**********************************************************************/
+
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
@@ -27,7 +40,12 @@ module InstMem(
     reg [31: 0] Mem [0: 63];
     assign data_out = Mem[addr/4];
 
+<<<<<<< Updated upstream
     /*initial begin
+=======
+    // test case 1
+    initial begin
+>>>>>>> Stashed changes
         Mem[0]=32'b000000000000_00000_010_00001_0000011 ;   //lw x1, 0(x0)
         Mem[1]=32'b000000000100_00000_010_00010_0000011 ;   //lw x2, 4(x0)
         Mem[2]=32'b000000001000_00000_010_00011_0000011 ;   //lw x3, 8(x0)
@@ -41,8 +59,14 @@ module InstMem(
         Mem[10]=32'b0100000_00010_00001_000_01000_0110011 ; //sub x8, x1, x2
         Mem[11]=32'b0000000_00010_00001_000_00000_0110011 ; //add x0, x1, x2
         Mem[12]=32'b0000000_00001_00000_000_01001_0110011 ; //add x9, x0, x1
+<<<<<<< Updated upstream
     end*/ 
     
+=======
+    end
+    
+    // test case 2
+>>>>>>> Stashed changes
     /*initial begin
         Mem[0]=32'b000000000000_00000_010_00001_0000011;   //lw x1, 0(x0)
         Mem[1]=32'b000000000100_00000_010_00010_0000011;   //lw x2, 4(x0)
@@ -61,6 +85,10 @@ module InstMem(
         Mem[14]=32'h0ff0000f;   //fence
     end*/ 
     
+<<<<<<< Updated upstream
+=======
+    // test case 3
+>>>>>>> Stashed changes
     /*initial begin
         Mem[0] = 32'b000000000000_00000_010_00001_0000011;   //lw x1, 0(x0)
         Mem[1] = 32'b000000000100_00000_010_00010_0000011;   //lw x2, 4(x0)

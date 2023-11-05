@@ -1,5 +1,17 @@
 `include "defines.v"
 
+/*******************************************************************
+*
+* Module: ControlUnit.v
+* Project: Pipelined-RISC-V Processor
+* Author: Adopted from Dr. Cherif Salama
+* Description: @inputs: inst
+               @outputs: imm
+               @importance: generating the immediate
+*
+* Change history: 03/11/2023 – changed the naming of variables
+*
+**********************************************************************/
 module ImmGen(
 	input  wire [31:0]  inst,
     output reg  [31:0]  imm

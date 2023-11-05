@@ -1,24 +1,15 @@
-`timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 09/19/2023 10:44:30 AM
-// Design Name: 
-// Module Name: DFlipFlop
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
-
+/*******************************************************************
+*
+* Module: DFlipFlop.v
+* Project: Pipelined-RISC-V Processor
+* Author: @all
+* Description: @inputs: clk, rst, d
+               @outputs: q
+               @importance: store unit
+*
+* Change history: No changes on the implementation done in the lab
+*
+**********************************************************************/
 
 module DFlipFlop(
     input clk,

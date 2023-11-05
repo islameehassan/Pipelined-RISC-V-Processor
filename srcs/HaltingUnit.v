@@ -1,8 +1,16 @@
-/*
-    This modules handles exceptions and undefined behaviors by setting a signal called halt equal to 1
-    , which is responsible for pausing the CPU, i.e., not taking any instructions. 
-    Important for debugging.
-*/
+/*******************************************************************
+*
+* Module: HaltingUnit.v
+* Project: Pipelined-RISC-V Processor
+* Author: Islam Hassan, islamee@aucegypt.edu
+* Description: @inputs: inst(opcode), ebreak_bit
+               @outputs: halt
+               @importance: halting the processor if an ebreak instruction 
+                            is encountered
+*
+* Change history: 03/11/2023 – created and implemented the module
+*
+**********************************************************************/
 `include "defines.v"
 
 module HaltingUnit(

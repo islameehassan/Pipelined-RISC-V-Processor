@@ -1,23 +1,16 @@
-`timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 09/26/2023 12:21:25 PM
-// Design Name: 
-// Module Name: RegFile
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************
+*
+* Module: RegFile.v
+* Project: Pipelined-RISC-V Processor
+* Author: @all
+* Description: @inputs: clk, rst, regwrite
+                        readreg1, readreg2, writereg, writedata
+               @outputs: readdata1, readdata2
+               @importance: storing the values of 32 general-purpose registers
+*
+* Change history: No changes on the implementation done in the lab
+*
+**********************************************************************/
 
 
 module RegFile#(parameter N = 32)(

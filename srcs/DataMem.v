@@ -1,5 +1,20 @@
 `include "defines.v"
 
+/*******************************************************************
+*
+* Module: DataMem.v
+* Project: Pipelined-RISC-V Processor
+* Author: Adham El-Asfar, adham_samy@aucegypt.edu
+* Description: @inputs: clk, memread, memwrite, func3, addr, data_in
+               @outputs: data_out
+               @importance: writing and reading from the data memory
+*
+* Change history: 04/11/2023 – added the implementation of all Load and store
+                                (except for lw and sw which were implemented in the lab)
+                  04/11/2023 – corrected some errors and added values to the memory for testing
+*
+**********************************************************************/
+
 module DataMem(
     input clk,
     input memread, memwrite,

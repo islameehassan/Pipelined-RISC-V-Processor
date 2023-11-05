@@ -1,6 +1,17 @@
-/*
-    This modules handles all the Branching instructions by using the flags provided from the ALU.
-*/
+/*******************************************************************
+*
+* Module: BranchingUnit.v
+* Project: Pipelined-RISC-V Processor
+* Author: Adham El-Asfar, adham_samy@aucegypt.edu
+* Description: @inputs: func3, cf, zf, vf, sf, jalr_jump
+               @outputs: r
+               @importance: deciding if to branch or not by setting r to 1 if branching
+                            and zero if not.
+*
+* Change history: 03/11/2023 – created and implemented the module
+                  04/11/2023 – added jalr_jump to handle this special kind of branching/jumping here 
+*
+**********************************************************************/
 `include "defines.v"
 
 module BranchingUnit(
@@ -12,7 +23,7 @@ module BranchingUnit(
     
     always @ * begin
         case (func3)
-            `BR_BEQ  : r = (zf || jalr_jump) ;           //BEQ  or JALR
+            `BR_BEQ  : r = (zf | jalr_jump) ;           //BEQ  or JALR
             `BR_BNE : r = ~zf;                           //BNE
             `BR_BLT : r = (sf != vf);                    //BLT
             `BR_BGE : r = (sf == vf);                    //BGE

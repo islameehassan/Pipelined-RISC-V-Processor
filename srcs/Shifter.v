@@ -1,3 +1,16 @@
+/*******************************************************************
+*
+* Module: ControlUnit.v
+* Project: Pipelined-RISC-V Processor
+* Author: Islam Hassan, islamee@aucegypt.edu
+* Description: @inputs: a, shamt, alusel
+               @outputs: r
+               @importance: shifting a by shamt according to alusel(left, right logical or arthimetic)
+*
+* Change history: 03/11/2023 – created and implemented the module
+                  04/11/2023 – corrected an error in the logic
+*
+**********************************************************************/
 /*
     shifts r left or right(logical and arthimetic)
 */

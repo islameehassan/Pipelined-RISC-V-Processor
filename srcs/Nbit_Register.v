@@ -1,6 +1,18 @@
 `include "Mux_2x1.v"
 `include "DFlipFlop.v"
 
+/*******************************************************************
+*
+* Module: Nbit_Register.v
+* Project: Pipelined-RISC-V Processor
+* Author: @all
+* Description: @inputs: clk, rst, load, d
+               @outputs: q
+               @importance: storing
+*
+* Change history: No changes on the implementation done in the lab
+*
+**********************************************************************/
 
 module Nbit_Register#(parameter N = 8)(
     input clk,

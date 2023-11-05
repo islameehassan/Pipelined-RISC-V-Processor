@@ -1,24 +1,15 @@
-`timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 09/19/2023 11:44:12 AM
-// Design Name: 
-// Module Name: Mux_2x1
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
-
+/*******************************************************************
+*
+* Module: Mux_2x1.v
+* Project: Pipelined-RISC-V Processor
+* Author: @all
+* Description: @inputs: a, b, sel
+               @outputs: out
+               @importance: selecting from two inputs based on sel
+*
+* Change history: No changes on the implementation done in the lab
+*
+**********************************************************************/
 
 module Mux_2x1(
     input a, b,

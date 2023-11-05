@@ -1,5 +1,19 @@
 `include "defines.v"
 
+/*******************************************************************
+*
+* Module: ALU_ControlUnit.v
+* Project: Pipelined-RISC-V Processor
+* Author: Islam Hassan, islamee@aucegypt.edu
+* Description: @inputs: aluop, func3, func7
+               @outputs: alusel
+               @importance: generating alusel which determines which mathematical
+               function to be executed by the ALU
+*
+* Change history: 03/11/2023 – created and implemented the module
+*                 04/11/2023 – corrected some syntax errors
+*
+**********************************************************************/
 module ALU_ControlUnit(
     input [2: 0] aluop,
     input [2: 0] func3,

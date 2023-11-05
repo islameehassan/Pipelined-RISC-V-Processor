@@ -1,5 +1,21 @@
 `include "defines.v"
 
+/*******************************************************************
+*
+* Module: ControlUnit.v
+* Project: Pipelined-RISC-V Processor
+* Author: Islam Hassan, islamee@aucegypt.edu
+* Description: @inputs: inst(opcode)
+               @outputs: branch, memread, memtoreg, memwrite, alusrc, regwrite, jalr_jump, jal_jump
+                         regwrite_sel, aluop
+               @importance: the main control unit of the processor
+*
+* Change history: 03/11/2023 – created and implemented the module
+                  04/11/2023 – corrected some syntax errors
+                  04/11/2023 – changed branch signal from 0 tp 1 in jalr 
+*
+**********************************************************************/
+
 module ControlUnit(
     input [4: 0]inst,
     output reg branch, memread, memtoreg, memwrite, alusrc, regwrite, jalr_jump, jal_jump,

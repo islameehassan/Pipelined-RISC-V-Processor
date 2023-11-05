@@ -1,5 +1,19 @@
 `include "defines.v"
 
+/*******************************************************************
+*
+* Module: Datapath.v
+* Project: Pipelined-RISC-V Processor
+* Author: @all
+* Description: @inputs: clk, rst, ledSel, ssdSel
+               @outputs: leds, ssd
+               @importance: module connecting all other components
+*
+* Change history: 03/11/2023 – added the branching and halting units
+                  04/11/2023 - corrected some errors and connected all components
+*
+**********************************************************************/
+
 module Datapath(
     input clk,
     input rst,

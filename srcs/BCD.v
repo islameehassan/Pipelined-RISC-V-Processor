@@ -1,4 +1,16 @@
-
+/*******************************************************************
+*
+* Module: BCD.v
+* Project: Pipelined-RISC-V Processor
+* Author: @all
+* Description: @inputs: num
+               @outputs: thousands, hundreds, tens, ones
+               @importance: generating thousands, hundreds, tens, and ones
+                            for the 7-segment display
+*
+* Change history: No changes on the implementation done in the lab
+*
+**********************************************************************/
 
 module BCD ( 
 input [12:0] num, 
