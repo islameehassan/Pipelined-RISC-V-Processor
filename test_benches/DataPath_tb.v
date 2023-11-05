@@ -1,5 +1,17 @@
 //`include"srcs/Datapath.v"
 
+/*******************************************************************
+*
+* Module: Datapath_tb.v
+* Project: Pipelined-RISC-V Processor
+* Author: @all
+* Description: @inputs: 
+               @outputs:
+               @importance: testing the datapath
+*
+* Change history: No changes were made on the lab implementation
+*
+**********************************************************************/
 module DataPath_tb();
 
     localparam clk_period = 20;
