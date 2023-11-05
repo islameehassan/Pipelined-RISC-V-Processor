@@ -1,3 +1,9 @@
+/*
+
+This code will generate random test cases for the RISC-V32 Assembly Language in a separate .txt file called test_cases that will exist in this file's directory.
+
+*/
+
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
