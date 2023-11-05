@@ -40,7 +40,8 @@ module InstMem(
     reg [31: 0] Mem [0: 63];
     assign data_out = Mem[addr/4];
 
-    // test case 3
+    //test case 3
+    /* 
     initial begin
         Mem[0]=32'b000000000000_00000_010_00001_0000011 ;   //lw x1, 0(x0)
         Mem[1]=32'b000000000100_00000_010_00010_0000011 ;   //lw x2, 4(x0)
@@ -55,7 +56,7 @@ module InstMem(
         Mem[10]=32'b0100000_00010_00001_000_01000_0110011 ; //sub x8, x1, x2
         Mem[11]=32'b0000000_00010_00001_000_00000_0110011 ; //add x0, x1, x2
         Mem[12]=32'b0000000_00001_00000_000_01001_0110011 ; //add x9, x0, x1
-    end
+    end*/
     
     // test case 1
     /*initial begin
@@ -74,10 +75,10 @@ module InstMem(
         Mem[12]=32'h401184b3;  //sub x9, x3, x1
         Mem[13]=32'h00615533;  //srl x10, x2, x6
         Mem[14]=32'h0ff0000f;   //fence
-    end*/ 
+    end */
     
     // test case 2
-    /*initial begin
+   /* initial begin
         Mem[0] = 32'b000000000000_00000_010_00001_0000011;   //lw x1, 0(x0)
         Mem[1] = 32'b000000000100_00000_010_00010_0000011;   //lw x2, 4(x0)
         Mem[2] = 32'b000000001000_00000_010_00011_0000011;   //lw x3, 8(x0)
@@ -108,8 +109,7 @@ module InstMem(
         Mem[27] = 32'h00310133;     // add x2, x2, x3
         Mem[28] = 32'h00000013;     // addi x0, x0, 0
     end
-
-
+    
   //Expected Outcome:
     x1 --> 17
     x2 --> 9
