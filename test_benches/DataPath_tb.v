@@ -1,4 +1,5 @@
-//`include"srcs/Datapath.v"
+`ifdef DATAPATH_TB
+`include"Datapath.v"
 
 /*******************************************************************
 *
@@ -28,6 +29,8 @@ module DataPath_tb();
     Datapath dp(clk, Reset, ledSel, ssdSel, leds, ssd);
 
     initial begin
+        $dumpfile("Datapath.vcd");
+        $dumpvars(0,DataPath_tb);
         ssdSel = 4'b0101;
         clk = 0;
         Reset = 1;
@@ -43,3 +46,4 @@ module DataPath_tb();
         end
     end
 endmodule
+`endif

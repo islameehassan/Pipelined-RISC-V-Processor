@@ -1,3 +1,5 @@
+`ifndef DFLIPFLOP_V
+`define DFLIPFLOP_V
 /*******************************************************************
 *
 * Module: DFlipFlop.v
@@ -25,3 +27,4 @@ module DFlipFlop(
             q <= d;
     end
 endmodule
+`endif

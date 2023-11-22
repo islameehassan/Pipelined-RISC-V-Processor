@@ -1,4 +1,7 @@
-`include "Mux_2x1.v"
+
+`ifndef NBIT_MUX2to1
+`define NBIT_MUX2to1
+// `include "srcs/Mux_2x1.v"
 
 /*******************************************************************
 *
@@ -13,7 +16,7 @@
 *
 **********************************************************************/
 
-module Nbit_mux2to1#(parameter N = 8)(
+module Nbit_mux2to1 #(parameter N = 8)(
     input [N-1:0] a, b,
     input sel,
     output[N-1:0] q
@@ -28,3 +31,4 @@ module Nbit_mux2to1#(parameter N = 8)(
     endgenerate
 
 endmodule
+`endif

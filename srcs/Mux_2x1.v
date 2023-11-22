@@ -1,3 +1,5 @@
+`ifndef MUX_2x1
+`define MUX_2x1
 /*******************************************************************
 *
 * Module: Mux_2x1.v
@@ -20,3 +22,4 @@ module Mux_2x1(
     assign out = (sel == 1'b1)? a: b;
 
 endmodule
+`endif

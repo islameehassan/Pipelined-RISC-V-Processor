@@ -1,4 +1,6 @@
-`include "defines.v"
+`ifndef CONTROL_UNIT
+`define CONTROL_UNIT
+`include "include/defines.v"
 
 /*******************************************************************
 *
@@ -168,3 +170,4 @@ module ControlUnit(
 
     end
 endmodule
+`endif

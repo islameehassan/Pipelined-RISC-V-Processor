@@ -1,3 +1,5 @@
+`ifndef FULLADDER_V
+`define FULLADDER_V
 /*******************************************************************
 *
 * Module: FullAdder.v
@@ -20,3 +22,4 @@ module FullAdder(
     assign {carry, sum} = A + B + cin;
 
 endmodule
+`endif

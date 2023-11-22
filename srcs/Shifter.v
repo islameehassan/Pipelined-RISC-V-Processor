@@ -1,6 +1,8 @@
+`ifndef SHIFTER_V
+`define SHIFTER_V
 /*******************************************************************
 *
-* Module: ControlUnit.v
+* Module: Shifter.v
 * Project: Pipelined-RISC-V Processor
 * Author: Islam Hassan, islamee@aucegypt.edu
 * Description: @inputs: a, shamt, alusel
@@ -43,3 +45,4 @@ module Shifter(
         end
     end
 endmodule
+`endif

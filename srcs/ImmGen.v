@@ -1,4 +1,6 @@
-`include "defines.v"
+`ifndef IMM_GEN
+`define IMM_GEN
+`include "include/defines.v"
 
 /*******************************************************************
 *
@@ -31,3 +33,4 @@ always @(*) begin
 end
 
 endmodule
+`endif

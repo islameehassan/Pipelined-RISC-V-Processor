@@ -1,4 +1,7 @@
 //`include "include/defines.v"
+`ifndef ALU
+`define ALU
+`include "Shifter.v"
 
 /*******************************************************************
 *
@@ -58,3 +61,4 @@ module ALU(
         endcase
     end
 endmodule
+`endif

@@ -1,3 +1,7 @@
+`ifndef HALTING_UNIT
+`define HALTING_UNIT
+`include "include/defines.v"
+
 /*******************************************************************
 *
 * Module: HaltingUnit.v
@@ -11,7 +15,6 @@
 * Change history: 03/11/2023 – created and implemented the module
 *
 **********************************************************************/
-`include "defines.v"
 
 module HaltingUnit(
     input[4: 0] inst,
@@ -33,3 +36,4 @@ module HaltingUnit(
         end
     end
 endmodule
+`endif

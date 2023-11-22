@@ -1,3 +1,6 @@
+`ifndef BRANCHING_UNIT
+`define BRANCHING_UNIT
+`include "include/defines.v"
 /*******************************************************************
 *
 * Module: BranchingUnit.v
@@ -12,7 +15,6 @@
                   04/11/2023 – added jalr_jump to handle this special kind of branching/jumping here 
 *
 **********************************************************************/
-`include "defines.v"
 
 module BranchingUnit(
     input [2:0] func3,
@@ -23,7 +25,7 @@ module BranchingUnit(
     
     always @ * begin
         case (func3)
-            `BR_BEQ  : r = (zf | jalr_jump) ;           //BEQ  or JALR
+            `BR_BEQ  : r = zf ;           //BEQ  or JALR
             `BR_BNE : r = ~zf;                           //BNE
             `BR_BLT : r = (sf != vf);                    //BLT
             `BR_BGE : r = (sf == vf);                    //BGE
@@ -33,3 +35,4 @@ module BranchingUnit(
         endcase
     end
 endmodule
+`endif
