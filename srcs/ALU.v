@@ -1,8 +1,8 @@
 //`include "include/defines.v"
-`ifndef ALU
+/*`ifndef ALU
 `define ALU
-`include "Shifter.v"
-
+`include "Shifter.v"*/
+`include "defines.v"
 /*******************************************************************
 *
 * Module: ALU.v
@@ -44,21 +44,21 @@ module ALU(
         (* parallel_case *)
         case (alusel)
             // arithmetic
-            4'b00_00 : r = add;
-            4'b00_01 : r = add;
-            4'b00_11 : r = b;
+            `ALU_ADD : r = add;
+            `ALU_SUB : r = add;
+            `ALU_PASS : r = b;
             // logic
-            4'b01_00:  r = a | b;
-            4'b01_01:  r = a & b;
-            4'b01_11:  r = a ^ b;
+            `ALU_OR:  r = a | b;
+            `ALU_AND:  r = a & b;
+            `ALU_XOR:  r = a ^ b;
             // shift
-            4'b10_00:  r=sh;        // SLL/ I
-            4'b10_01:  r=sh;        // SRL/I
-            4'b10_10:  r=sh;        // SRA/I
+            `ALU_SLL:  r=sh;        // SLL/ I
+            `ALU_SRL:  r=sh;        // SRL/I
+            `ALU_SRA:  r=sh;        // SRA/I
             // slt & sltu
-            4'b11_01:  r = {31'b0,(sf != vf)}; 
-            4'b11_11:  r = {31'b0,(~cf)};            	
+            `ALU_SLT:  r = {31'b0,(sf != vf)}; 
+            `ALU_SLTU:  r = {31'b0,(~cf)};            	
         endcase
     end
 endmodule
-`endif
+//`endif

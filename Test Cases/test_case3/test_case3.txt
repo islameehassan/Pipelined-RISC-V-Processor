@@ -2,7 +2,7 @@ lw x1, 0(x0)
 lw x2, 4(x0)
 lw x3, 8(x0)
 or x4, x1, x2
-beq x4, x3, 4
+beq x4, x3, 8
 add x3, x1, x2
 add x5, x3, x2
 sw x5, 12(x0)

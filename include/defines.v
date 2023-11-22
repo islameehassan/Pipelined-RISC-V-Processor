@@ -75,4 +75,4 @@
 `define     ALUOP_JALR            3'b011
 `define     ALUOP_OTHER           3'b111 
 
-
+`define     NOP                   32'h00000033

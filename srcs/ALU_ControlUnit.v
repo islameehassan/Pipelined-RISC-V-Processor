@@ -1,7 +1,8 @@
-`ifndef ALU_CONTROLUNIT_V
+/*`ifndef ALU_CONTROLUNIT_V
 `define ALU_CONTROLUNIT_V
 `include "include/defines.v"
-
+*/
+`include "defines.v"
 /*******************************************************************
 *
 * Module: ALU_ControlUnit.v
@@ -99,4 +100,4 @@ module ALU_ControlUnit(
         end
     end
 endmodule
-`endif
+//`endif

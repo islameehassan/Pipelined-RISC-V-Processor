@@ -1,5 +1,5 @@
-`ifndef HAZARDUNIT_V
-`define HAZARDUNIT_V
+/*`ifndef HAZARDUNIT_V
+`define HAZARDUNIT_V*/
 /*******************************************************************
 *
 * Module: HazardUnit.v
@@ -27,4 +27,4 @@ module HazardUnit(
             stall = 0;    
     end
 endmodule
-`endif
+//`endif

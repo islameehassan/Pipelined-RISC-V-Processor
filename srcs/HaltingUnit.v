@@ -1,7 +1,7 @@
-`ifndef HALTING_UNIT
+/*`ifndef HALTING_UNIT
 `define HALTING_UNIT
-`include "include/defines.v"
-
+`include "include/defines.v"*/
+`include "defines.v"
 /*******************************************************************
 *
 * Module: HaltingUnit.v
@@ -36,4 +36,4 @@ module HaltingUnit(
         end
     end
 endmodule
-`endif
+//`endif

@@ -1,6 +1,7 @@
-`ifndef BRANCHING_UNIT
+/*`ifndef BRANCHING_UNIT
 `define BRANCHING_UNIT
-`include "include/defines.v"
+`include "include/defines.v"*/
+`include "defines.v"
 /*******************************************************************
 *
 * Module: BranchingUnit.v
@@ -35,4 +36,4 @@ module BranchingUnit(
         endcase
     end
 endmodule
-`endif
+//`endif

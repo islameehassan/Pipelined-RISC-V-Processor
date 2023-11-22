@@ -1,5 +1,5 @@
-`ifndef NBIT_MUX4TO1_V
-`define NBIT_MUX4TO1_V
+/*`ifndef NBIT_MUX4TO1_V
+`define NBIT_MUX4TO1_V*/
 
 // `include "srcs/Mux_2x1.v"
 
@@ -20,4 +20,4 @@ module Nbit_mux4to1 #(parameter n = 8)(
 	    end
 	endgenerate
 endmodule
-`endif
+//`endif

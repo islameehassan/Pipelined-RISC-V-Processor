@@ -1,5 +1,5 @@
-`ifndef REG_FILE_V
-`define REG_FILE_V
+/*`ifndef REG_FILE_V
+`define REG_FILE_V*/
 /*******************************************************************
 *
 * Module: RegFile.v
@@ -45,4 +45,4 @@ module RegFile#(parameter N = 32)(
     assign readdata1 = reg_file[readreg1];
     assign readdata2 = reg_file[readreg2];
 endmodule
-`endif
+//`endif

@@ -1,5 +1,5 @@
-`ifndef FORWARDINGUNIT_V
-`define FORWARDINGUNIT_V
+/*`ifndef FORWARDINGUNIT_V
+`define FORWARDINGUNIT_V*/
 /*******************************************************************
 *
 * Module: ForwardingUnit.v
@@ -36,4 +36,4 @@ module ForwardingUnit(
     end
            
 endmodule
-`endif
+//`endif

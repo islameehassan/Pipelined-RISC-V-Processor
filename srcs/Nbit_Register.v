@@ -1,7 +1,7 @@
-`ifndef N_BIT_REGISTER
+/*`ifndef N_BIT_REGISTER
 `define N_BIT_REGISTER
 `include "srcs/Mux_2x1.v"
-`include "srcs/DFlipFlop.v"
+`include "srcs/DFlipFlop.v"*/
 /*******************************************************************
 *
 * Module: Nbit_Register.v
@@ -34,4 +34,4 @@ module Nbit_Register#(parameter N = 8)(
     endgenerate
 endmodule
 
-`endif
+//`endif

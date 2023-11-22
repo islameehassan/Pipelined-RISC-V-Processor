@@ -20,6 +20,8 @@
 // `include "srcs/Nbit_Register.v"
 // `include "srcs/slowclk.v"
 
+`include "defines.v"
+
 /*******************************************************************
 *
 * Module: Datapath.v
@@ -79,21 +81,21 @@ module Datapath(
 
     // halting happens as soon as the instruction is fetched so that no other instructions are fetched after
     HaltingUnit hau(.inst(instruction[`IR_opcode]), .ebreak_bit(instruction[20]), .halt(halt));
-    Nbit_Register #(64) IF_ID (.clk(clk), .rst(rst), .load(1'b1), .d({PC, instruction}), .q({IF_ID_PC, IF_ID_Inst}));
+    Nbit_Register #(64) IF_ID (.clk(clk), .rst(rst), .load(!stall), .d({PC, instruction}), .q({IF_ID_PC, IF_ID_Inst}));
     
     
     // ID_EX Register
     HazardUnit hu(.IF_ID_Rs1(IF_ID_Inst[`IR_rs1]), .IF_ID_Rs2(IF_ID_Inst[`IR_rs2]), .ID_EX_Rd(ID_EX_Rd),
                   .ID_EX_MemRead(ID_EX_Ctrl_MEM[3]), .stall(stall));
-    ControlUnit cu(.inst(instruction[`IR_opcode]), .branch(branch), .memread(memread), .memtoreg(memtoreg), .memwrite(memwrite),
+    ControlUnit cu(.inst(IF_ID_Inst[`IR_opcode]), .branch(branch), .memread(memread), .memtoreg(memtoreg), .memwrite(memwrite),
                    .alusrc(alusrc), .regwrite(regwrite), .jalr_jump(jalr_jump), .jal_jump(jal_jump), .regwrite_sel(regwrite_sel), .aluop(aluop));
     RegFile rf(.clk(clk), .rst(rst), .regwrite(MEM_WB_Ctrl[2]), .readreg1(IF_ID_Inst[`IR_rs1]), .readreg2(IF_ID_Inst[`IR_rs2]),
                .writereg(MEM_WB_Rd), .writedata(RF_writedata), .readdata1(RF_data1), .readdata2(RF_data2));
     ImmGen ig(.inst(IF_ID_Inst), .imm(imm));
 
     assign temp_control_signals = {alusrc, aluop, branch, memread, memwrite, jalr_jump, jal_jump, memtoreg, regwrite, regwrite_sel};    
-    assign control_signals = (stall || (PCsrc == 2'b10 || PCsrc == 2'b11)) ? (12'b0): temp_control_signals;    // flushing the pipeling
-    assign shamt = (instruction[5])?(RF_data2):(instruction[`IR_shamt]);
+    assign control_signals = (stall || (PCsrc == 2'b10 || PCsrc == 2'b01)) ? (12'b0): temp_control_signals;    // flushing the pipeling
+    assign shamt = (IF_ID_Inst[5])?(RF_data2):(IF_ID_Inst[`IR_shamt]);
 
 
     wire [31:0] ID_EX_PC, ID_EX_RegR1, ID_EX_RegR2, ID_EX_Imm; 
@@ -105,8 +107,8 @@ module Datapath(
     wire [4:0] ID_EX_Shamt; 
 
     Nbit_Register #(165) ID_EX (.clk(clk), .rst(rst), .load(1'b1),
-    .d({{alusrc, aluop}, {branch, memread, memwrite, jalr_jump, jal_jump}, {memtoreg, regwrite, regwrite_sel},
-     IF_ID_PC , RF_data1, RF_data2, imm, {IF_ID_Inst[30], IF_ID_Inst[`IR_funct3]}, IF_ID_Inst[`IR_rs1], IF_ID_Inst[`IR_rs2], IF_ID_Inst[`IR_rd], shamt}),
+    .d({control_signals,IF_ID_PC , RF_data1, RF_data2, imm, {IF_ID_Inst[30], IF_ID_Inst[`IR_funct3]}, 
+    IF_ID_Inst[`IR_rs1], IF_ID_Inst[`IR_rs2], IF_ID_Inst[`IR_rd], shamt}),
     .q({ID_EX_Ctrl_EX, ID_EX_Ctrl_MEM, ID_EX_Ctrl_WB, ID_EX_PC, ID_EX_RegR1, ID_EX_RegR2, ID_EX_Imm, ID_EX_Func, ID_EX_Rs1, ID_EX_Rs2, ID_EX_Rd, ID_EX_Shamt}));
     
 
@@ -118,12 +120,13 @@ module Datapath(
 
     Nbit_mux4to1 #(32) alu_firstinput_mux(.a(32'b0), .b(EX_MEM_ALU_out), .c(RF_writedata), .d(ID_EX_RegR1), .sel(forwardA), .q(ALU_data1));
     Nbit_mux4to1 #(32) forward_mux_aludata2(.a(32'b0), .b(EX_MEM_ALU_out), .c(RF_writedata), .d(ID_EX_RegR2), .sel(forwardB), .q(Forward_MUX_data2));
-    assign ALU_data2 = (ID_EX_Ctrl_EX[3])?(ID_EX_Imm):(Forward_MUX_data);
+    assign ALU_data2 = (ID_EX_Ctrl_EX[3])?(ID_EX_Imm):(Forward_MUX_data2);
 
     ALU alu(.a(ALU_data1), .b(ALU_data2), .shamt(ID_EX_Shamt), .alusel(alusel), .r(ALU_result), .cf(cf), .zf(zf), .vf(vf), .sf(sf));
     RCA #(32) rca(.a(ID_EX_PC), .b(ID_EX_Imm), .sum(RCA_result));
 
 
+    // fLUSHING
     wire [3:0] temp_ALU_flags;
     assign temp_ALU_flags = {cf, zf, vf, sf};
     assign ALU_flags = (PCsrc == 2'b10 || PCsrc == 2'b01)?(4'b0):(temp_ALU_flags);   // flushing the pipeline
@@ -139,7 +142,7 @@ module Datapath(
     wire [2:0] EX_MEM_Func3;
                                  
     Nbit_Register #(181) EX_MEM (.clk(clk), .rst(rst), .load(1'b1),
-    .d({temp_ctrl_signals[8:4], temp_ctrl_signals[3:0], RCA_result, ALU_flags, ALU_result, Forward_MUX_data, ID_EX_PC, ID_EX_Imm, ID_EX_Rd, ID_EX_Func[2:0]}),
+    .d({temp_ctrl_signals[8:4], temp_ctrl_signals[3:0], RCA_result, ALU_flags, ALU_result, Forward_MUX_data2, ID_EX_PC, ID_EX_Imm, ID_EX_Rd, ID_EX_Func[2:0]}),
     .q({EX_MEM_Ctrl_MEM, EX_MEM_Ctrl_WB, EX_MEM_BranchAddOut, EX_MEM_ALU_Flags, 
         EX_MEM_ALU_out, EX_MEM_RegR2, EX_MEM_PC, EX_MEM_LUI_IMM, EX_MEM_Rd, EX_MEM_Func3}));
     
@@ -153,13 +156,13 @@ module Datapath(
         PC Manipulation
         --> PCSRC:  new_PC
         --> 00: Takes the value of PC+4
-        --> 01: 10: Takes the value coming from the RCA after branching or jumping
+        --> 01: Takes the value coming from the RCA after branching or jumping
         --> 10: Takes the value coming from the ALU after JALR instruction
     */
-    assign PCsrc = {EX_MEM_Ctrl_MEM[1], (branch & branch_flag) | EX_MEM_Ctrl_MEM[0]};
+    assign PCsrc = {EX_MEM_Ctrl_MEM[1], (EX_MEM_Ctrl_MEM[4] & branch_flag) | EX_MEM_Ctrl_MEM[0]};
     // assign new_PC = (PCsrc[1] == 1'b0) ? (PCsrc[0] == 1'b0 ? PC+4: PC): (PCsrc[0] == 1'b0 ? RCA_result: ALU_result); 
-    Nbit_mux4to1 #(32) new_pc_mux(.a(PC+4), .b(EX_MEM_ALU_out), .c(EX_MEM_BranchAddOut), .d(PC+4), .sel(PCsrc), .q(new_PC));
-    Nbit_Register #(32)pc(clk, rst, !halt | !stall, new_PC, PC);
+    Nbit_mux4to1 #(32) new_pc_mux(.a(PC), .b(EX_MEM_ALU_out), .c(EX_MEM_BranchAddOut), .d(PC+4), .sel(PCsrc), .q(new_PC));
+    Nbit_Register #(32)pc(clk, rst, !halt & !stall, new_PC, PC);
 
     wire [31:0] MEM_WB_Mem_out, MEM_WB_ALU_out, MEM_WB_AUIPC_Result, MEM_WB_PC, MEM_WB_LUI_IMM;
     wire [3:0] MEM_WB_Ctrl;
@@ -178,7 +181,7 @@ module Datapath(
             --> 10: write from imm, which is the case in LUI
             --> 11: write from the rca, which is the case in AUIPC
     */
-    Nbit_mux4to1 #(32) rf_writedata_mux(.a(MEM_WB_AUIPC_Result), .b(MEM_WB_LUI_IMM), .c(MEM_WB_PC + 4), .d(Mux_DM_Result), .sel(regwrite_sel), .q(RF_writedata));    
+    Nbit_mux4to1 #(32) rf_writedata_mux(.a(MEM_WB_AUIPC_Result), .b(MEM_WB_LUI_IMM), .c(MEM_WB_PC + 4), .d(Mux_DM_Result), .sel(MEM_WB_Ctrl[1:0]), .q(RF_writedata));    
 
     /*
         LEDs and Switches for FPGA display

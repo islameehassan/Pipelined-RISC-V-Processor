@@ -1,7 +1,7 @@
-`ifndef DATAMEM
+/*`ifndef DATAMEM
 `define DATAMEM
-`include "include/defines.v"
-
+`include "include/defines.v"*/
+`include "defines.v"
 /*******************************************************************
 *
 * Module: DataMem.v
@@ -73,4 +73,4 @@ module DataMem(
     end
 
 endmodule
-`endif
+//`endif

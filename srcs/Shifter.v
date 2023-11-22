@@ -1,5 +1,5 @@
-`ifndef SHIFTER_V
-`define SHIFTER_V
+/*`ifndef SHIFTER_V
+`define SHIFTER_V*/
 /*******************************************************************
 *
 * Module: Shifter.v
@@ -45,4 +45,4 @@ module Shifter(
         end
     end
 endmodule
-`endif
+//`endif

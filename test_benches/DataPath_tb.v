@@ -1,5 +1,5 @@
-`ifdef DATAPATH_TB
-`include"Datapath.v"
+/*`ifdef DATAPATH_TB
+`include"Datapath.v"*/
 
 /*******************************************************************
 *
@@ -17,7 +17,6 @@ module DataPath_tb();
 
     localparam clk_period = 20;
 
-
     reg clk;
     reg Reset;
     reg [1:0] ledSel;
@@ -29,8 +28,8 @@ module DataPath_tb();
     Datapath dp(clk, Reset, ledSel, ssdSel, leds, ssd);
 
     initial begin
-        $dumpfile("Datapath.vcd");
-        $dumpvars(0,DataPath_tb);
+        /*$dumpfile("Datapath.vcd");
+        $dumpvars(0,DataPath_tb);*/
         ssdSel = 4'b0101;
         clk = 0;
         Reset = 1;
@@ -46,4 +45,4 @@ module DataPath_tb();
         end
     end
 endmodule
-`endif
+//`endif

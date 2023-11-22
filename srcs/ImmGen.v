@@ -1,7 +1,7 @@
-`ifndef IMM_GEN
+/*`ifndef IMM_GEN
 `define IMM_GEN
-`include "include/defines.v"
-
+`include "include/defines.v"*/
+`include "defines.v"
 /*******************************************************************
 *
 * Module: ControlUnit.v
@@ -33,4 +33,4 @@ always @(*) begin
 end
 
 endmodule
-`endif
+//`endif
