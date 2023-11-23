@@ -56,7 +56,7 @@ module Datapath(
     wire [31:0] new_PC;                                                                 // Nbit_Register
     
     wire [4:0] shamt;
-    wire [3:0] alusel;                                                                  // ALU_ControlUnit - ALU
+    wire [4:0] alusel;                                                                  // ALU_ControlUnit - ALU
     wire [2:0] aluop;                                                                   // ControlUnit - ALU_ControlUnit
     wire [1:0] regwrite_sel;                                                            // ControlUnit - ALU_ControlUnit
     wire [12:0] control_signals, temp_control_signals;                                  // ControlUnit
@@ -111,31 +111,32 @@ module Datapath(
                .writereg(MEM_WB_Rd), .writedata(RF_writedata), .readdata1(RF_data1), .readdata2(RF_data2));
     ImmGen ig(.inst(IF_ID_Inst), .imm(imm));
 
-    // FLUSHING
+    // flushing
     assign temp_control_signals = {alusrc, aluop, branch, memread, memwrite, jalr_jump, jal_jump, memtoreg, regwrite, regwrite_sel};    
     assign control_signals = (stall || (PCsrc == 2'b10 || PCsrc == 2'b01)) ? (12'b0): temp_control_signals;    // flushing the pipeling
     assign shamt = (IF_ID_Inst[5])?(RF_data2):(IF_ID_Inst[`IR_shamt]);
 
 
     wire [31:0] ID_EX_PC, ID_EX_RegR1, ID_EX_RegR2, ID_EX_Imm; 
+    wire [6:0] ID_EX_Func7;
     wire [3:0] ID_EX_Ctrl_EX;
     wire [4:0] ID_EX_Ctrl_MEM;
     wire [3:0] ID_EX_Ctrl_WB; 
-    wire [3:0] ID_EX_Func;
-    wire [4:0] ID_EX_Rs1, ID_EX_Rs2, ID_EX_Rd;
+    wire [2:0] ID_EX_Func3;
+    wire [4:0] ID_EX_Rs1, ID_EX_Rs2, ID_EX_Rd, ID_EX_OPCODE;
     wire [4:0] ID_EX_Shamt; 
 
-    Nbit_Register #(165) ID_EX (.clk(clk), .rst(rst), .load(1'b1),
-    .d({control_signals,IF_ID_PC , RF_data1, RF_data2, imm, {IF_ID_Inst[30], IF_ID_Inst[`IR_funct3]}, 
+    Nbit_Register #(176) ID_EX (.clk(clk), .rst(rst), .load(1'b1),
+    .d({control_signals, IF_ID_PC , RF_data1, RF_data2, imm, IF_ID_Inst[`IR_funct7], IF_ID_Inst[`IR_funct3], 
     IF_ID_Inst[`IR_rs1], IF_ID_Inst[`IR_rs2], IF_ID_Inst[`IR_rd], shamt}),
-    .q({ID_EX_Ctrl_EX, ID_EX_Ctrl_MEM, ID_EX_Ctrl_WB, ID_EX_PC, ID_EX_RegR1, ID_EX_RegR2, ID_EX_Imm, ID_EX_Func, ID_EX_Rs1, ID_EX_Rs2, ID_EX_Rd, ID_EX_Shamt}));
+    .q({ID_EX_Ctrl_EX, ID_EX_Ctrl_MEM, ID_EX_Ctrl_WB, ID_EX_PC, ID_EX_RegR1, ID_EX_RegR2, ID_EX_Imm, ID_EX_Func7, ID_EX_Func3, ID_EX_Rs1, ID_EX_Rs2, ID_EX_Rd, ID_EX_Shamt}));
     
 
 
     // EX_MEM
     ForwardingUnit fu(.ID_EX_Rs1(ID_EX_Rs1), .ID_EX_Rs2(ID_EX_Rs2), .EX_MEM_Rd(EX_MEM_Rd), .MEM_WB_Rd(MEM_WB_Rd), 
     .EX_MEM_regwrite(EX_MEM_Ctrl_WB[2]), .MEM_WB_regwrite(MEM_WB_Ctrl[2]), .forwardA(forwardA), .forwardB(forwardB));
-    ALU_ControlUnit alu_c(.aluop(ID_EX_Ctrl_EX[2:0]), .func3(ID_EX_Func[2:0]), .func7bit(ID_EX_Func[3]), .alusel(alusel));
+    ALU_ControlUnit alu_c(.opcode(ID_EX_OPCODE), .aluop(ID_EX_Ctrl_EX[2:0]), .func3(ID_EX_Func3), .func7(ID_EX_Func7), .alusel(alusel));
 
     Nbit_mux4to1 #(32) alu_firstinput_mux(.a(32'b0), .b(EX_MEM_ALU_out), .c(RF_writedata), .d(ID_EX_RegR1), .sel(forwardA), .q(ALU_data1));
     Nbit_mux4to1 #(32) forward_mux_aludata2(.a(32'b0), .b(EX_MEM_ALU_out), .c(RF_writedata), .d(ID_EX_RegR2), .sel(forwardB), .q(Forward_MUX_data2));
@@ -154,7 +155,7 @@ module Datapath(
     wire [2:0] EX_MEM_Func3;
                                  
     Nbit_Register #(181) EX_MEM (.clk(~clk), .rst(rst), .load(1'b1),
-    .d({ID_EX_Ctrl_MEM, ID_EX_Ctrl_WB, RCA_result, ALU_flags, ALU_result, Forward_MUX_data2, ID_EX_PC, ID_EX_Imm, ID_EX_Rd, ID_EX_Func[2:0]}),
+    .d({ID_EX_Ctrl_MEM, ID_EX_Ctrl_WB, RCA_result, ALU_flags, ALU_result, Forward_MUX_data2, ID_EX_PC, ID_EX_Imm, ID_EX_Rd, ID_EX_Func3}),
     .q({EX_MEM_Ctrl_MEM, EX_MEM_Ctrl_WB, EX_MEM_BranchAddOut, EX_MEM_ALU_Flags, 
         EX_MEM_ALU_out, EX_MEM_RegR2, EX_MEM_PC, EX_MEM_LUI_IMM, EX_MEM_Rd, EX_MEM_Func3}));
     

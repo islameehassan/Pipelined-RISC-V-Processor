@@ -2,7 +2,9 @@
 /*`ifndef ALU
 `define ALU
 `include "Shifter.v"*/
-`include "defines.v"
+`include "include/defines.v"
+`include "srcs/Shifter.v"
+
 /*******************************************************************
 *
 * Module: ALU.v
@@ -20,12 +22,13 @@
 module ALU(
     input   wire [31:0] a, b,
 	input   wire [4:0]  shamt,  // shift amount
-    input   wire [3:0]  alusel,
+    input   wire [4:0]  alusel,
 	output  reg  [31:0] r,
 	output  wire  cf, zf, vf, sf // carry, zero, overflow and sign flags
 );
 
     wire [31:0] add, sub, op_b;
+    reg [31:0] left_away;
     wire cfa, cfs;
     
     assign op_b = (~b);
@@ -57,7 +60,17 @@ module ALU(
             `ALU_SRA:  r=sh;        // SRA/I
             // slt & sltu
             `ALU_SLT:  r = {31'b0,(sf != vf)}; 
-            `ALU_SLTU:  r = {31'b0,(~cf)};            	
+            `ALU_SLTU:  r = {31'b0,(~cf)};    
+            // mul
+            `ALU_MUL:  r = a * b;
+            `ALU_MULH: {r, left_away} = $signed(a) * $signed(b);     
+            `ALU_MULHSU: {r, left_away} = $signed(a) * b;
+            `ALU_MULHU: {r, left_away} = a * b;
+            // div  
+            `ALU_DIV:  r = $signed(a) / $signed(b);
+            `ALU_DIVU: r = a / b;
+            `ALU_REM:  r = $signed(a) % $signed({1'b0,b}); // 1'b0 is added to make b signed
+            `ALU_REMU: r = a % b; 	
         endcase
     end
 endmodule

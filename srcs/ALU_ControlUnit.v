@@ -2,7 +2,8 @@
 `define ALU_CONTROLUNIT_V
 `include "include/defines.v"
 */
-`include "defines.v"
+`include "include/defines.v"
+
 /*******************************************************************
 *
 * Module: ALU_ControlUnit.v
@@ -21,8 +22,8 @@ module ALU_ControlUnit(
     input [4:0] opcode,             // ADD this to the DATAPATH
     input [2:0] aluop,
     input [2:0] func3,
-    input [6:0] func7,                      // ADD this to the DATAPATH
-    output reg [3: 0] alusel
+    input [6:0] func7,              // ADD this to the DATAPATH
+    output reg [4:0] alusel
 );
 
 
@@ -30,59 +31,48 @@ module ALU_ControlUnit(
         // Arithmetic and Logical Instructions
         if(aluop == `ALUOP_R_I)
         begin
+            // M Instructions
             if(func7 == `F7_MUL && opcode == `OPCODE_Arith_R)
-            begin                                               ///ERRORRR _ Continue
-                
-            
+            begin                                             
+                case(func3)
+                    `F3_MUL: alusel = `ALU_MUL;
+                    `F3_MULH: alusel = `ALU_MULH;
+                    `F3_MULHSU: alusel = `ALU_MULHSU;
+                    `F3_MULHU: alusel = `ALU_MULHU;
+                    `F3_DIV: alusel = `ALU_DIV;
+                    `F3_DIVU: alusel = `ALU_DIVU;
+                    `F3_REM: alusel = `ALU_REM;
+                    `F3_REMU: alusel = `ALU_REMU;
+                    default: alusel = `ALU_PASS;
+                endcase
             end
-                // ADD & ADDI & SUB
-                if(func3 == `F3_ADD)
-                    begin
-                        if(func7[5] == 1'b1)
-                            alusel = `ALU_SUB;
-                        else
-                            alusel = `ALU_ADD;
-                    end
-                // SLL & SLLI
-                else if(func3 == `F3_SLL)
-                    begin
-                        alusel = `ALU_SLL;
-                    end
-                // SLT & SLTU
-                else if(func3 == `F3_SLT)
-                    begin
-                        alusel = `ALU_SLT;
-                    end
-                // SLTU & SLTIU
-                else if(func3 == `F3_SLTU)
-                    begin
-                        alusel = `ALU_SLTU;
-                    end
-                // XOR & XORI
-                else if(func3 == `F3_XOR)
-                    begin
-                        alusel = `ALU_XOR;
-                    end
-                // SRL & SRLI & SRA & SRAI
-                else if(func3 == `F3_SRL)
-                    begin
-                        if(func7[5] == 1'b1)
-                            alusel = `ALU_SRA;
-                        else
-                            alusel = `ALU_SRL;
-                    end
-                // OR & ORI
-                else if(func3 == `F3_OR)
-                    begin
-                        alusel = `ALU_OR;
-                    end
-                // AND & ANDI
-                else if(func3 == `F3_AND)
-                    begin
-                        alusel = `ALU_AND;
-                    end
-                else
-                    alusel = `ALU_PASS;
+            else 
+            begin
+                // R and I Instructions
+                case(func3)
+                    `F3_ADD: // ADD & ADDI & SUB
+                        begin
+                            if(func7 == `F7_SUB_SRA)
+                                alusel = `ALU_SUB;
+                            else
+                                alusel = `ALU_ADD;
+                        end
+                    `F3_SLL: alusel = `ALU_SLL;         // SLL & SLLI
+                    `F3_SLT: alusel = `ALU_SLT;         // SLT & SLTI
+                    `F3_SLTU: alusel = `ALU_SLTU;       // SLTU & SLTIU
+                    `F3_XOR: alusel = `ALU_XOR;         // XOR & XORI
+                    `F3_SRL:                            // SRL & SRLI & SRA & SRAI
+                        begin
+                            if(func7 == `F7_SUB_SRA)
+                                alusel = `ALU_SRA;
+                            else
+                                alusel = `ALU_SRL;
+                        end     
+                    `F3_OR: alusel = `ALU_OR;           // OR & ORI
+                    `F3_AND: alusel = `ALU_AND;         // AND & ANDI
+                    default: alusel = `ALU_PASS;        // default case
+                endcase
+            end
         end
         // ADD for Store and Load
         else if(aluop == `ALUOP_Load_Store)
