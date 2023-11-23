@@ -35,8 +35,8 @@ module DataPath_tb();
         Reset = 1;
         #clk_period 
         clk = 1;
-        #clk_period 
-        Reset = 0;
+        #clk_period
+        Reset = 0; 
         clk = 0;
         #clk_period 
         forever begin

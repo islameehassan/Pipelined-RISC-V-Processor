@@ -29,7 +29,7 @@ module RegFile#(parameter N = 32)(
 
     integer i;
 
-    always@(negedge clk)begin
+    always@(posedge clk)begin
     if(rst == 1'b1)begin
         for(i = 0; i < 32; i = i + 1)
         begin

@@ -18,9 +18,10 @@
 *
 **********************************************************************/
 module ALU_ControlUnit(
-    input [2: 0] aluop,
-    input [2: 0] func3,
-    input func7bit,
+    input [4:0] opcode,             // ADD this to the DATAPATH
+    input [2:0] aluop,
+    input [2:0] func3,
+    input [6:0] func7,                      // ADD this to the DATAPATH
     output reg [3: 0] alusel
 );
 
@@ -29,54 +30,59 @@ module ALU_ControlUnit(
         // Arithmetic and Logical Instructions
         if(aluop == `ALUOP_R_I)
         begin
-            // ADD & ADDI & SUB
-            if(func3 == `F3_ADD)
-            begin
-                if(func7bit == 1'b1)
-                    alusel = `ALU_SUB;
+            if(func7 == `F7_MUL && opcode == `OPCODE_Arith_R)
+            begin                                               ///ERRORRR _ Continue
+                
+            
+            end
+                // ADD & ADDI & SUB
+                if(func3 == `F3_ADD)
+                    begin
+                        if(func7[5] == 1'b1)
+                            alusel = `ALU_SUB;
+                        else
+                            alusel = `ALU_ADD;
+                    end
+                // SLL & SLLI
+                else if(func3 == `F3_SLL)
+                    begin
+                        alusel = `ALU_SLL;
+                    end
+                // SLT & SLTU
+                else if(func3 == `F3_SLT)
+                    begin
+                        alusel = `ALU_SLT;
+                    end
+                // SLTU & SLTIU
+                else if(func3 == `F3_SLTU)
+                    begin
+                        alusel = `ALU_SLTU;
+                    end
+                // XOR & XORI
+                else if(func3 == `F3_XOR)
+                    begin
+                        alusel = `ALU_XOR;
+                    end
+                // SRL & SRLI & SRA & SRAI
+                else if(func3 == `F3_SRL)
+                    begin
+                        if(func7[5] == 1'b1)
+                            alusel = `ALU_SRA;
+                        else
+                            alusel = `ALU_SRL;
+                    end
+                // OR & ORI
+                else if(func3 == `F3_OR)
+                    begin
+                        alusel = `ALU_OR;
+                    end
+                // AND & ANDI
+                else if(func3 == `F3_AND)
+                    begin
+                        alusel = `ALU_AND;
+                    end
                 else
-                    alusel = `ALU_ADD;
-            end
-            // SLL & SLLI
-            else if(func3 == `F3_SLL)
-            begin
-                alusel = `ALU_SLL;
-            end
-            // SLT & SLTU
-            else if(func3 == `F3_SLT)
-            begin
-                alusel = `ALU_SLT;
-            end
-            // SLTU & SLTIU
-            else if(func3 == `F3_SLTU)
-            begin
-                alusel = `ALU_SLTU;
-            end
-            // XOR & XORI
-            else if(func3 == `F3_XOR)
-            begin
-                alusel = `ALU_XOR;
-            end
-            // SRL & SRLI & SRA & SRAI
-            else if(func3 == `F3_SRL)
-            begin
-                if(func7bit == 1'b1)
-                    alusel = `ALU_SRA;
-                else
-                    alusel = `ALU_SRL;
-            end
-            // OR & ORI
-            else if(func3 == `F3_OR)
-            begin
-                alusel = `ALU_OR;
-            end
-            // AND & ANDI
-            else if(func3 == `F3_AND)
-            begin
-                alusel = `ALU_AND;
-            end
-            else
-                alusel = `ALU_PASS;
+                    alusel = `ALU_PASS;
         end
         // ADD for Store and Load
         else if(aluop == `ALUOP_Load_Store)

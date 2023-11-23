@@ -23,7 +23,6 @@ module InstMem(
     assign data_out = Mem[addr/4];
     
     // test case 1
-    
     /*
     initial begin
         Mem[0] = 32'h00002083;      //lw x1, 0(x0)
@@ -43,7 +42,6 @@ module InstMem(
         Mem[14]=32'h0ff0000f;       //fence
     end 
     */
-    
     
     // test case 2
     /*
@@ -78,8 +76,9 @@ module InstMem(
         Mem[27] = 32'h00000013;     // addi x0, x0, 0
     end
     */
+    
     //test case 3    
-     
+    /*
     initial begin
         Mem[0] = 32'h00002083;      //lw x1, 0(x0)
         Mem[1] = 32'h00402103;      //lw x2, 4(x0)
@@ -95,7 +94,7 @@ module InstMem(
         Mem[11] = 32'h00208033;     //add x0, x1, x2
         Mem[12] = 32'h001004B3;     //add x9, x0, x1
     end
-    
+    */
     
 endmodule
 //`endif

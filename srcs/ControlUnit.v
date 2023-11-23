@@ -19,7 +19,7 @@
 **********************************************************************/
 
 module ControlUnit(
-    input [4: 0]inst,
+    input [4: 0]opcode,
     output reg branch, memread, memtoreg, memwrite, alusrc, regwrite, jalr_jump, jal_jump,
     output reg [1: 0] regwrite_sel,
     output reg [2: 0] aluop
@@ -27,7 +27,7 @@ module ControlUnit(
 
     always@(*)begin
         // R-Format
-        if(inst == `OPCODE_Arith_R)
+        if(opcode == `OPCODE_Arith_R)
         begin
             branch = 0;
             memread = 0;
@@ -41,7 +41,7 @@ module ControlUnit(
             jal_jump = 1'b0;
         end
         // I-Format (except for load and jalr)
-        else if(inst == `OPCODE_Arith_I)
+        else if(opcode == `OPCODE_Arith_I)
         begin
             branch = 0;
             memread = 0;
@@ -55,7 +55,7 @@ module ControlUnit(
             jal_jump = 1'b0;
         end
         // Load instructions(lw, lb, lbu, lh, lhu)
-        else if(inst == `OPCODE_Load)
+        else if(opcode == `OPCODE_Load)
         begin
             branch = 0;
             memread = 1;
@@ -69,7 +69,7 @@ module ControlUnit(
             jal_jump = 1'b0;
         end
         // Store instructions(sw, sb, sh)
-        else if(inst == `OPCODE_Store)
+        else if(opcode == `OPCODE_Store)
         begin
             branch = 0;
             memread = 0;
@@ -83,7 +83,7 @@ module ControlUnit(
             jal_jump = 1'b0;      
         end
         // Branch Instructions(BEQ, BNE, BLT, BGE, BLTU, BGEU)
-        else if(inst == `OPCODE_Branch)
+        else if(opcode == `OPCODE_Branch)
         begin
             branch = 1;
             memread = 0;
@@ -97,7 +97,7 @@ module ControlUnit(
             jal_jump = 1'b0;
         end
         // JALR
-        else if(inst == `OPCODE_JALR)
+        else if(opcode == `OPCODE_JALR)
         begin
             branch = 1; // it does branching but through another source, so it does not make sense to have branch = 1 here
             memread = 0;
@@ -111,7 +111,7 @@ module ControlUnit(
             jal_jump = 1'b0;
         end
         // JAL
-        else if(inst == `OPCODE_JAL)
+        else if(opcode == `OPCODE_JAL)
         begin
             branch = 0;
             memread = 0;
@@ -125,7 +125,7 @@ module ControlUnit(
             jal_jump = 1'b1;
         end
         // LUI
-        else if(inst == `OPCODE_LUI)
+        else if(opcode == `OPCODE_LUI)
         begin
             branch = 0;
             memread = 0;
@@ -139,7 +139,7 @@ module ControlUnit(
             jal_jump = 1'b0;
         end
         // AUIPC
-        else if(inst == `OPCODE_AUIPC)
+        else if(opcode == `OPCODE_AUIPC)
         begin
             branch = 0;
             memread = 0;

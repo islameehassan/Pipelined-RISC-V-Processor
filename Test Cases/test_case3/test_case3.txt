@@ -1,6 +1,6 @@
-lw x1, 0(x0)
-lw x2, 4(x0)
-lw x3, 8(x0)
+lw x1, 512(x0)
+lw x2, 516(x0)
+lw x3, 520(x0)
 or x4, x1, x2
 beq x4, x3, 8
 add x3, x1, x2

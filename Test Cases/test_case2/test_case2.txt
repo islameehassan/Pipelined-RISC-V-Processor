@@ -1,7 +1,7 @@
-lw x1, 0(x0)
-lw x2, 4(x0)
-lw x3, 8(x0)
-lw x5, 12(x0)           
+lw x1, 512(x0)
+lw x2, 516(x0)
+lw x3, 520(x0)
+lw x5, 524(x0)           
 xori x4, x2, 6
 sltu x6, x2, x5
 slt x7, x2, x5
@@ -12,10 +12,8 @@ bne x0, x0, 4
 sltiu x8, x2, 39
 jal x9, 12
 bge x3, x2, 20
-add x0, x0, x0
-add x0, x0, x0
 addi x11, x3, 50
-jalr x10, x9, 0
+jalr x10, 0(x9)
 blt x0, x1, 8
 addi x0, x0, 0
 auipc x12, 1	
@@ -24,6 +22,7 @@ sltiu x14, x2, -1
 slti x15, x2, -1
 ori x16, x2, 4
 andi x2, x1, 0
+addi x11, x3, 50
 ebreak
 add x2, x2, x3
 addi x0, x0, 0

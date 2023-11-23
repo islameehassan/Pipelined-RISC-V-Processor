@@ -45,14 +45,13 @@ module Datapath(
     output reg [12:0] ssd
  );
     
-    wire s_clk;
     wire [31:0] PC;
-    wire [31:0] instruction, temp_instruction;                                          // InstMem - ControlUnit - ImmGen - RegFile - RCA
+    reg [31:0] instruction;                                                            // InstMem - ControlUnit - ImmGen - RegFile - RCA
     wire [31:0] RF_data1, RF_data2, RF_writedata;                                       // RegFile - ALU - DataMem
     wire [31:0] imm;                                                                    // ImmGen - Nbit_ShiftLeftBy1
-    wire [31:0] ALU_data1, ALU_data2, Forward_MUX_data2, ALU_result;                      // ALU
-    wire [31:0] DM_result, Mux_DM_Result;                                               // DataMem
-    //wire [31:0] SL_result;                                                             // Nbit_ShiftLeftBy1 - RCA
+    wire [31:0] ALU_data1, ALU_data2, Forward_MUX_data2, ALU_result;                    // ALU
+    wire [31:0] Mux_DM_Result;                                                          // DataMem
+    reg [31:0] DM_result;
     wire [31:0] RCA_result;                                                             // RCA
     wire [31:0] new_PC;                                                                 // Nbit_Register
     
@@ -69,30 +68,50 @@ module Datapath(
     wire halt;                                                                          // HaltingUnit
     wire stall;                                                                         // HazardUnit
     wire [1:0] forwardA, forwardB;                                                      // ForwardingUnit
-    
+
    
+    // Memory
+    wire [2:0] Memory_funct3;
+    wire Memory_memread, Memory_memwrite;
+    wire [31:0] Memory_addr, Memory_output;
+    
+    assign Memory_funct3 = (clk) ? (`F3_LW_SW):(EX_MEM_Func3);  // read entire word in case of reading an instruction
+    assign Memory_memread = (clk) ? (1'b1):(EX_MEM_Ctrl_MEM[3]);
+    assign Memory_memwrite = (clk) ? (1'b0):(EX_MEM_Ctrl_MEM[2]);
+    assign Memory_addr = (clk) ? (PC):(EX_MEM_ALU_out);
 
-    slow_clk sck(.clk(clk), .rst(rst), .slow_clk(s_clk));
-
+    Memory mem(.clk(~clk), .memread(Memory_memread), .memwrite(Memory_memwrite), .func3(Memory_funct3), 
+    .addr(Memory_addr), .data_in(EX_MEM_RegR2), .data_out(Memory_output));
+    
+    always @(*) begin
+        if(clk == 1)
+            instruction = Memory_output;
+        else
+            DM_result = Memory_output;
+    end
+    
+    
     // IF_ID Register
+    
     wire [31:0] IF_ID_PC, IF_ID_Inst;
-    InstMem im(.addr(PC), .data_out(temp_instruction)); 
-    assign instruction = (PCsrc == 2'b10 || PCsrc == 2'b01) ? (`NOP):(temp_instruction);   // flushing the pipeline
+    // InstMem im(.addr(PC), .data_out(temp_instruction)); 
 
     // halting happens as soon as the instruction is fetched so that no other instructions are fetched after
     HaltingUnit hau(.inst(instruction[`IR_opcode]), .ebreak_bit(instruction[20]), .halt(halt));
-    Nbit_Register #(64) IF_ID (.clk(clk), .rst(rst), .load(!stall), .d({PC, instruction}), .q({IF_ID_PC, IF_ID_Inst}));
+    Nbit_Register #(32)pc(clk, rst, !halt & !stall, new_PC, PC);
+    Nbit_Register #(64) IF_ID (.clk(~clk), .rst(rst), .load(!stall), .d({PC, instruction}), .q({IF_ID_PC, IF_ID_Inst}));
     
     
     // ID_EX Register
     HazardUnit hu(.IF_ID_Rs1(IF_ID_Inst[`IR_rs1]), .IF_ID_Rs2(IF_ID_Inst[`IR_rs2]), .ID_EX_Rd(ID_EX_Rd),
                   .ID_EX_MemRead(ID_EX_Ctrl_MEM[3]), .stall(stall));
-    ControlUnit cu(.inst(IF_ID_Inst[`IR_opcode]), .branch(branch), .memread(memread), .memtoreg(memtoreg), .memwrite(memwrite),
+    ControlUnit cu(.opcode(IF_ID_Inst[`IR_opcode]), .branch(branch), .memread(memread), .memtoreg(memtoreg), .memwrite(memwrite),
                    .alusrc(alusrc), .regwrite(regwrite), .jalr_jump(jalr_jump), .jal_jump(jal_jump), .regwrite_sel(regwrite_sel), .aluop(aluop));
-    RegFile rf(.clk(clk), .rst(rst), .regwrite(MEM_WB_Ctrl[2]), .readreg1(IF_ID_Inst[`IR_rs1]), .readreg2(IF_ID_Inst[`IR_rs2]),
+    RegFile rf(.clk(~clk), .rst(rst), .regwrite(MEM_WB_Ctrl[2]), .readreg1(IF_ID_Inst[`IR_rs1]), .readreg2(IF_ID_Inst[`IR_rs2]),
                .writereg(MEM_WB_Rd), .writedata(RF_writedata), .readdata1(RF_data1), .readdata2(RF_data2));
     ImmGen ig(.inst(IF_ID_Inst), .imm(imm));
 
+    // FLUSHING
     assign temp_control_signals = {alusrc, aluop, branch, memread, memwrite, jalr_jump, jal_jump, memtoreg, regwrite, regwrite_sel};    
     assign control_signals = (stall || (PCsrc == 2'b10 || PCsrc == 2'b01)) ? (12'b0): temp_control_signals;    // flushing the pipeling
     assign shamt = (IF_ID_Inst[5])?(RF_data2):(IF_ID_Inst[`IR_shamt]);
@@ -125,14 +144,7 @@ module Datapath(
     ALU alu(.a(ALU_data1), .b(ALU_data2), .shamt(ID_EX_Shamt), .alusel(alusel), .r(ALU_result), .cf(cf), .zf(zf), .vf(vf), .sf(sf));
     RCA #(32) rca(.a(ID_EX_PC), .b(ID_EX_Imm), .sum(RCA_result));
 
-
-    // fLUSHING
-    wire [3:0] temp_ALU_flags;
-    assign temp_ALU_flags = {cf, zf, vf, sf};
-    assign ALU_flags = (PCsrc == 2'b10 || PCsrc == 2'b01)?(4'b0):(temp_ALU_flags);   // flushing the pipeline
-
-    wire [8:0] temp_ctrl_signals;
-    assign temp_ctrl_signals = (PCsrc == 2'b10 || PCsrc == 2'b01)?(8'b0):({ID_EX_Ctrl_MEM, ID_EX_Ctrl_WB});  // flushing the pipeline
+    assign ALU_flags = {cf, zf, vf, sf}; 
 
     wire [31:0] EX_MEM_BranchAddOut, EX_MEM_ALU_out, EX_MEM_RegR2, EX_MEM_PC, EX_MEM_LUI_IMM; 
     wire [4:0] EX_MEM_Ctrl_MEM;
@@ -141,14 +153,14 @@ module Datapath(
     wire [3:0] EX_MEM_ALU_Flags;
     wire [2:0] EX_MEM_Func3;
                                  
-    Nbit_Register #(181) EX_MEM (.clk(clk), .rst(rst), .load(1'b1),
-    .d({temp_ctrl_signals[8:4], temp_ctrl_signals[3:0], RCA_result, ALU_flags, ALU_result, Forward_MUX_data2, ID_EX_PC, ID_EX_Imm, ID_EX_Rd, ID_EX_Func[2:0]}),
+    Nbit_Register #(181) EX_MEM (.clk(~clk), .rst(rst), .load(1'b1),
+    .d({ID_EX_Ctrl_MEM, ID_EX_Ctrl_WB, RCA_result, ALU_flags, ALU_result, Forward_MUX_data2, ID_EX_PC, ID_EX_Imm, ID_EX_Rd, ID_EX_Func[2:0]}),
     .q({EX_MEM_Ctrl_MEM, EX_MEM_Ctrl_WB, EX_MEM_BranchAddOut, EX_MEM_ALU_Flags, 
         EX_MEM_ALU_out, EX_MEM_RegR2, EX_MEM_PC, EX_MEM_LUI_IMM, EX_MEM_Rd, EX_MEM_Func3}));
     
 
     // MEM_WB
-    DataMem dm(.clk(clk), .memread(EX_MEM_Ctrl_MEM[3]), .memwrite(EX_MEM_Ctrl_MEM[2]), .func3(EX_MEM_Func3), .addr(EX_MEM_ALU_out), .data_in(EX_MEM_RegR2), .data_out(DM_result));
+    // DataMem dm(.clk(clk), .memread(EX_MEM_Ctrl_MEM[3]), .memwrite(EX_MEM_Ctrl_MEM[2]), .func3(EX_MEM_Func3), .addr(EX_MEM_ALU_out), .data_in(EX_MEM_RegR2), .data_out(DM_result));
     BranchingUnit bu(.func3(EX_MEM_Func3), .cf(EX_MEM_ALU_Flags[3]), .zf(EX_MEM_ALU_Flags[2]), .vf(EX_MEM_ALU_Flags[1]), .sf(EX_MEM_ALU_Flags[0]),
                      .jalr_jump(EX_MEM_Ctrl_MEM[1]), .r(branch_flag));
     
@@ -162,7 +174,6 @@ module Datapath(
     assign PCsrc = {EX_MEM_Ctrl_MEM[1], (EX_MEM_Ctrl_MEM[4] & branch_flag) | EX_MEM_Ctrl_MEM[0]};
     // assign new_PC = (PCsrc[1] == 1'b0) ? (PCsrc[0] == 1'b0 ? PC+4: PC): (PCsrc[0] == 1'b0 ? RCA_result: ALU_result); 
     Nbit_mux4to1 #(32) new_pc_mux(.a(PC), .b(EX_MEM_ALU_out), .c(EX_MEM_BranchAddOut), .d(PC+4), .sel(PCsrc), .q(new_PC));
-    Nbit_Register #(32)pc(clk, rst, !halt & !stall, new_PC, PC);
 
     wire [31:0] MEM_WB_Mem_out, MEM_WB_ALU_out, MEM_WB_AUIPC_Result, MEM_WB_PC, MEM_WB_LUI_IMM;
     wire [3:0] MEM_WB_Ctrl;
