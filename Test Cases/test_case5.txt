@@ -1,0 +1,18 @@
+bgeu x29, x10, 32
+jalr x1, x13, 73
+srli x24, x28, 29
+lui x9, 64
+lh x30, 65(x27)
+sll x7, x22, x25
+sra x2, x13, x7
+and x3, x7, x29
+add x8, x0, x18
+xori x27, x21, 47
+mulhsu x16, x16, x30
+srai x17, x26, 92
+sw x1, 96(x3)
+bltu x31, x2, 8
+lb x12, 4(x13)
+sltiu x19, x31, 95
+slti x0, x25, 54
+jalr x30, x28, 90

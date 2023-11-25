@@ -23,12 +23,11 @@ module ALU(
 	input   wire [4:0]  shamt,  // shift amount
     input   wire [4:0]  alusel,
 	output  reg  [31:0] r,
-	output  wire  cf, zf, vf, sf // carry, zero, overflow and sign flags
 );
 
     wire [31:0] add, sub, op_b;
     reg [31:0] left_away;
-    wire cfa, cfs;
+    wire  cf, zf, vf, sf; // carry, zero, overflow and sign flags
     
     assign op_b = (~b);
     

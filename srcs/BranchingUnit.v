@@ -20,7 +20,6 @@
 module BranchingUnit(
     input [2:0] func3,
     input cf, zf, vf, sf,
-    input jalr_jump,
     output reg r
 );
     

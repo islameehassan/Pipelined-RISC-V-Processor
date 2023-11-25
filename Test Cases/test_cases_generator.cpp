@@ -17,6 +17,7 @@ struct instruction{
 };
 
 // list all 40 rv32I instructions here
+// add M-extension instructions here
 
 instruction rv32I_instructions[] = {
     {"lui", 'U'},
@@ -56,9 +57,17 @@ instruction rv32I_instructions[] = {
     {"sra", 'R'},
     {"or", 'R'},
     {"and", 'R'},
+    {"mul", 'R'},
+    {"mulh", 'R'},
+    {"mulhsu", 'R'},
+    {"mulhu", 'R'},
+    {"div", 'R'},
+    {"divu", 'R'},
+    {"rem", 'R'},
+    {"remu", 'R'},
     {"fence", 'Y'},
     {"ecall", 'Y'},
-    {"ebreak", 'Y'}
+    {"ebreak", 'Y'},
 };
 
 std::string regs_name[] = {
