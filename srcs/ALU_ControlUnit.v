@@ -2,7 +2,7 @@
 `define ALU_CONTROLUNIT_V
 `include "include/defines.v"
 */
-`include "include/defines.v"
+`include "defines.v"
 
 /*******************************************************************
 *

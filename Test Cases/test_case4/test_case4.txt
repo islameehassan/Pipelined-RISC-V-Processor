@@ -1,0 +1,8 @@
+ecall
+ecall
+jal x1, 20
+jal x1, 16
+ecall
+ecall
+ecall
+jalr x2, 0(x1)

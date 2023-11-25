@@ -2,8 +2,7 @@
 /*`ifndef ALU
 `define ALU
 `include "Shifter.v"*/
-`include "include/defines.v"
-`include "srcs/Shifter.v"
+`include "defines.v"
 
 /*******************************************************************
 *
@@ -64,7 +63,7 @@ module ALU(
             // mul
             `ALU_MUL:  r = a * b;
             `ALU_MULH: {r, left_away} = $signed(a) * $signed(b);     
-            `ALU_MULHSU: {r, left_away} = $signed(a) * b;
+            `ALU_MULHSU: {r, left_away} = $signed(a) * $signed({1'b0,b});
             `ALU_MULHU: {r, left_away} = a * b;
             // div  
             `ALU_DIV:  r = $signed(a) / $signed(b);
