@@ -17,13 +17,13 @@
 **********************************************************************/
 
 module HaltingUnit(
-    input[4: 0] inst,
+    input[4: 0] opcode,
     input ebreak_bit,   // bit 20 in ebreak, used to set halt to 1 automatically
     output reg halt
 );
-    always@(inst or ebreak_bit)
+    always@(opcode or ebreak_bit)
     begin
-        if(inst == `OPCODE_SYSTEM && ebreak_bit)
+        if(opcode == `OPCODE_SYSTEM && ebreak_bit)
         begin
             halt = 1'b1;
         end

@@ -78,12 +78,10 @@ module Datapath(
     // InstMem im(.addr(PC), .data_out(temp_instruction)); 
 
     // halting happens as soon as the instruction is fetched so that no other instructions are fetched after
-    HaltingUnit hau(.inst(instruction[`IR_opcode]), .ebreak_bit(instruction[20]), .halt(halt));
+    HaltingUnit hau(.opcode(instruction[`IR_opcode]), .ebreak_bit(instruction[20]), .halt(halt));
     Nbit_Register #(32)pc(clk, rst, !halt & !stall, new_PC, PC);
     Nbit_Register #(64) IF_ID (.clk(~clk), .rst(rst), .load(!stall), .d({PC, instruction}), .q({IF_ID_PC, IF_ID_Inst}));
     
-    
-    // ID_EX Register
     HazardUnit hu(.IF_ID_Rs1(IF_ID_Inst[`IR_rs1]), .IF_ID_Rs2(IF_ID_Inst[`IR_rs2]), .ID_EX_Rd(ID_EX_Rd),
                   .ID_EX_MemRead(ID_EX_Ctrl_MEM[3]), .stall(stall));
     ControlUnit cu(.opcode(IF_ID_Inst[`IR_opcode]), .branch(branch), .memread(memread), .memtoreg(memtoreg), .memwrite(memwrite),
@@ -106,7 +104,7 @@ module Datapath(
         --> 1: Takes the value coming from the RCA after branching or jumping(jal or jalr)
     */
     assign PCsrc = {(branch & branch_flag) | jal_jump | jalr_jump};
- 
+    
     wire [31:0] jumping_first_input;
     wire [31:0] jal_jalr_first_input;
     assign jal_jalr_first_input = (forward_branchA) ? ID_EX_PC + 4: RF_data1;
@@ -118,7 +116,7 @@ module Datapath(
     assign control_signals = {alusrc, aluop, memread, memwrite, memtoreg, regwrite, regwrite_sel};   
     assign shamt = (IF_ID_Inst[5])?(RF_data2):(IF_ID_Inst[`IR_shamt]);
 
-
+    // ID_EX Register
     wire [31:0] ID_EX_PC, ID_EX_RegR1, ID_EX_RegR2, ID_EX_Imm, ID_EX_AUIPC_Result;
     wire [6:0] ID_EX_Func7;
     wire [3:0] ID_EX_Ctrl_EX;
@@ -136,7 +134,7 @@ module Datapath(
     
 
 
-    // EX_MEM
+
     ForwardingUnit fu(.ID_EX_Rs1(ID_EX_Rs1), .ID_EX_Rs2(ID_EX_Rs2), .EX_MEM_Rd(EX_MEM_Rd), .MEM_WB_Rd(MEM_WB_Rd), .inst_rs1(IF_ID_Inst[`IR_rs1]), .inst_rs2(IF_ID_Inst[`IR_rs2]),
     .EX_MEM_regwrite(EX_MEM_Ctrl_WB[2]), .MEM_WB_regwrite(MEM_WB_Ctrl[2]), .forwardA(forwardA), .forwardB(forwardB), .forward_branchA(forward_branchA), .forward_branchB(forward_branchB));
     ALU_ControlUnit alu_c(.opcode(ID_EX_OPCODE), .aluop(ID_EX_Ctrl_EX[2:0]), .func3(ID_EX_Func3), .func7(ID_EX_Func7), .alusel(alusel));
@@ -146,7 +144,8 @@ module Datapath(
     assign ALU_data2 = (ID_EX_Ctrl_EX[3])?(ID_EX_Imm):(Forward_MUX_data2);
 
     ALU alu(.a(ALU_data1), .b(ALU_data2), .shamt(ID_EX_Shamt), .alusel(alusel), .r(ALU_result));
-
+    
+    // EX_MEM
     wire [31:0] EX_MEM_ALU_out, EX_MEM_RegR2, EX_MEM_PC, EX_MEM_LUI_IMM, EX_MEM_AUIPC_Result; 
     wire [1:0] EX_MEM_Ctrl_MEM;
     wire [3:0] EX_MEM_Ctrl_WB;
