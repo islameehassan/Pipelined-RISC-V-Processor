@@ -22,7 +22,7 @@ module ALU(
     input   wire [31:0] a, b,
 	input   wire [4:0]  shamt,  // shift amount
     input   wire [4:0]  alusel,
-	output  reg  [31:0] r,
+	output  reg  [31:0] r
 );
 
     wire [31:0] add, sub, op_b;
@@ -67,7 +67,7 @@ module ALU(
             // div  
             `ALU_DIV:  r = $signed(a) / $signed(b);
             `ALU_DIVU: r = a / b;
-            `ALU_REM:  r = $signed(a) % $signed({1'b0,b}); // 1'b0 is added to make b signed
+            `ALU_REM:  r = $signed(a) % $signed(b); // 1'b0 is added to make b signed
             `ALU_REMU: r = a % b; 	
         endcase
     end

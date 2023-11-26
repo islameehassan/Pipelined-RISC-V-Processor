@@ -1,0 +1,11 @@
+lw x1, 512(x0)
+lw x2, 516(x0)
+lw x3, 520(x0)
+addi x4, x1, 3
+addi x5, x1, -12
+mul x6, x4, x5
+add x6, x6, x6
+slli x7, x6, 24
+mulh x8, x7, x7
+div x9, x6, x5
+rem x10, x1, x2

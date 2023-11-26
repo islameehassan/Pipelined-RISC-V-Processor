@@ -44,9 +44,11 @@ set_property -dict {PACKAGE_PIN E3 IOSTANDARD LVCMOS33} [get_ports SSD_Clock]
 create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5}[get_ports{CLK100MHZ}]
 
 #RISC Clock
+#set_property -dict {PACKAGE_PIN V10 IOSTANDARD LVCMOS33} [get_ports {Clock}]
 set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets Clock]
 set_property -dict {PACKAGE_PIN P17 IOSTANDARD LVCMOS33} [get_ports {Clock}]
 
 # Reset
+#set_property -dict {PACKAGE_PIN V11 IOSTANDARD LVCMOS33} [get_ports {Reset}]
 set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets Reset]
 set_property -dict {PACKAGE_PIN M17 IOSTANDARD LVCMOS33} [get_ports {Reset}]

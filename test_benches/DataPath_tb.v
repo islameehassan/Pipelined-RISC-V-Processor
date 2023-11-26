@@ -15,7 +15,7 @@
 **********************************************************************/
 module DataPath_tb();
 
-    localparam clk_period = 20;
+    localparam clk_period = 10;
 
     reg clk;
     reg Reset;
