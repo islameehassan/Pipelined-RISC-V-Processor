@@ -1,8 +1,6 @@
 # Pipelined-RISC-V-Processor
-Adham ElAsfar - 900213258
-Islam Hassan - 900213579
-Ahmed Jaheen  - 900212943
+This project is co-work between Ahmed Jaheen, Adhem El-Asfar, and Islam Hassan as part of the Computer Architecture course at 
+the American University in Cairo. The project aims to build a fully pipelined RISC-V processor using Verilog.
 
-This Program implements the 40 instructions of the RISC-V32 Processor.
-The 40 instructions have been tested and validated using 3 test cases.
-Assuming that all the branch instructions do not use labels, instead, they use the immediate value equivalent to the number of instructions to be skipped if the branching happens
+The processor is fully pipelined and handles all types of hazards correctly while working with a single memory for reading and writing.
+It supports the 40 RV-32I instructions in addition to RV-32M instructions. Other features include moving the branching decision and address computation to the ID stage while handling all the resulting hazards correctly. For more information about the implementation and the block diagram, refer to the technical report.  
