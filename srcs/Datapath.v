@@ -240,7 +240,7 @@ module Datapath(
             4'b1000: ssd = MEM_WB_Rd; // "8"     
             4'b1001: ssd = ALU_data2; // "9"
             4'b1010: ssd = EX_MEM_ALU_out; // "negative"
-            4'b1011: ssd = Memory_output; // "off"
+            4'b1011: ssd = Mux_DM_Result; // "off"
             default: ssd = 12'b0; // "0"
            endcase 
        end
