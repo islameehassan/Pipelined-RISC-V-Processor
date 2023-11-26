@@ -1,5 +1,5 @@
 # Pipelined-RISC-V-Processor
-This project is co-work between Ahmed Jaheen, Adhem El-Asfar, and Islam Hassan as part of the Computer Architecture course at 
+This project is co-work between Ahmed Jaheen, Adham El-Asfar, and Islam Hassan as part of the Computer Architecture course at 
 the American University in Cairo. The project aims to build a fully pipelined RISC-V processor using Verilog.
 
 The processor is fully pipelined and handles all types of hazards correctly while working with a single memory for reading and writing.
